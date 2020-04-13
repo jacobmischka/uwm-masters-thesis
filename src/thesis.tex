@@ -1,5 +1,6 @@
 \documentclass[12pt]{report}
 \usepackage{uwmthesis}
+\usepackage[colorlinks=true]{hyperref}
 
 \begin{document}
 
@@ -10,8 +11,7 @@
 \majorprof{John Boyland}
 \algorithmspagefalse
 
-\Abstract{
-	Words words words
+\Abstract{% TODO
 }
 
 
@@ -19,29 +19,136 @@
 
 \prefacesection{Preface}
 
-This thesis tells you all you need to know about...
+% TODO
 
-\Acks{
-	I would like to thank...
+\Acks{%
+	% TODO
 }
 
 \afterpreface
 
 \chapter{Introduction}
-...
 
-\chapter{Conclusions}
-...
+With the only standardized and widely supported language for the Web being
+JavaScript, it became more common for other languages to support JavaScript as
+a compile target, with developers writing software in those other languages and
+compiling the software to JavaScript to run on the Web.
+Some of these source languages were designed intentionally with this goal in
+mind, such as CoffeeScript.
+The goals of these projects were to provide developers the same distribution
+platform (the Web) but with the freedom of writing their programs in a
+different syntax.
+However, with the usage of the Web as a universal platform continued to expand,
+authors of other projects wished to compile their software to be run on the
+Web, but had strong reasons requiring the use of a different source language.
+Often, this was a lower-level language used for
+performance reasons, a stricter language for safety reasons, or support for
+existing libraries or large projects in existing languages that cannot easily
+be ported to JavaScript.
+Often, this language is C or C++.
 
-\appendix
+The Emscripten project compiles LLVM\footnote{\url{http://llvm.org/}} intermediate representation
+software, which can be generated from C/C++, to JavaScript\cite{AboutEmscripten}.
+The resulting compiled program utilizes a subset of JavaScript's available syntax and operations,
+called asm.js,
+which are heavily optimized by JavaScript interpreters and just-in-time compilers,
+as well as the underlying hardware\cite{AsmJsResig}.
 
-\chapter{A Long Proof}
-...
+While this clever usage of the existing platform provided performance imrovements, JavaScript was
+not designed as a low-level, performant compile target, and the resulting benefits of asm.js
+relied heavily on JavaScript runtime implementations.
+An attempt to define a formal specification and standardize the platform began
+in 2013, but was abandoned shortly thereafter in 2014\cite{AsmJsSpec}.
+
+The abandonment of asm.js's formalization coincided with discussions amongst its project
+leaders for defining a new ``proper'' bytecode solution for native code on the Web; followed
+shortly thereafter by initial discussions between browser developers and JavaScript runtime implementers
+about ``WebAsm''.
+As this project evolved and was fleshed out, the WebAssembly project began and was announced publicly
+on June 17, 2015\cite{HistoryWasmTalk}.
+
+\chapter{WebAssembly}
+
+% TODO: Define Web VMs
+
+\section{Evolving WebAssembly}
+
+The defined goals of the WebAssembly project details the process for evolving the language:
+incrementally after providing a minimum viable product (MVP) core language specification and
+implementation\cite{WasmHighLevelGoals}.
+For the release of the 1.0 MVP, the main requirements of being a well-defined replacement for asm.js
+with distributable modules, efficient binary bytecode, and high performance were the focus\cite{WasmMvp}.
+While a large list of future features are at various levels of consideration for post-MVP Wasm,
+the Community Group and Working Group utilize a phase-based proposal system for introducing,
+discussing, and implementing additional features for WebAssembly\cite{WasmFutureFeatures}.
+
+For a feature to be adopted into the language, a proposal must be drafted which passes through a sequence
+of phases\cite{WasmW3CProcess}:
+
+\begin{enumerate}
+	\item[0] \textbf{Pre-Proposal}:
+		A Community Group member files
+		an issue to present the idea, and a proposal champion or champions
+		emerges which submits the proposal to the Community Group's biweekly agenda.
+		After being approved for general interest of research by the group,
+		a proposal repository is created in the WebAssembly GitHub organization.
+
+	\item[1] \textbf{Feature Proposal}:
+		The proposal's repository is used to facilitate discussion about, and design and specification
+		of, the feature.
+
+	\item[2] \textbf{Proposed Specification Text Available}:
+		Once the full proposed English specification text is available, prototype implementations
+		for are created so that a test suite can be added for the new feature.
+
+	\item[3] \textbf{Implementation Phase}:
+		After a satisfactory test suite is created and passes for the feature in some implementation,
+		embedders implement the feature and integrate the changes into the reference WebAssembly interpreter.
+
+	\item[4] \textbf{Standardize the Feature}:
+		After Web VMs and toolchains implement the feature and
+		the Community Group reaches consensus for the feature and its design choices,
+		the feature is handed off to the Working Group for final stages of discussion
+		and handling of edge cases.
+		The Community Group is responsible for major feature changes
+		and design decisions, so the proposal is essentially frozen once being passed
+		to the Working Group.
+
+	\item[5] \textbf{The Feature is Standardized}:
+		Consensus is reached by the Working Group that the feature is complete.
+\end{enumerate}
+
+
+\chapter{Soundness}
+
+Core WebAssembly's type system has been proven sound both via a natural language
+proof\cite[p. 140]{WasmSpec} and via a mechanization in Isabelle\cite{WattMechanizing}.
+This work builds on the latter, extending the initial
+mechanization of the core language to include extensions provided by several proposed
+extensions.
+
+\chapter{Incremental Soundness} % TODO
+
+\section{Sign Extenion Operations} % TODO
+
+\section{Non-trapping Int-to-Float Conversions} % TODO
+
+\section{Tail Call} % TODO
+
+\chapter{Conclusions} % TODO
+
+\chapter{Related Work} % TODO
+
+\chapter{Future Work} % TODO
+
+\chapter{Summary} % TODO
+
+% \appendix
 
 \clearpage
 
 \bibliographystyle{alpha}
-\bibliography{thesis}
+\bibliography{thesis,wasm-cg}
 \addcontentsline{toc}{chapter}{Bibliography}
 
 \end{document}
