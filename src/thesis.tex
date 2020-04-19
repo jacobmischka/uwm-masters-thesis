@@ -69,7 +69,66 @@ on June 17, 2015\cite{HistoryWasmTalk}.
 
 \chapter{WebAssembly}
 
-% TODO: Define Web VMs
+WebAssembly (Wasm) is a ``safe, portable, low-level code format designed for
+efficient execution and compact representation''\cite[p. 1]{WasmSpec}.
+WebAssembly defines a virtual instruction set that encapsulates programs
+with it as their target, making them independent of the underlying platform
+on which the program runs.
+WebAssembly programs are executed by \textit{embedding environments}, which provide
+an abstraction layer between the program and the underlying system. % FIXME: pluralization?
+
+WebAssembly supports two official formats: a readable text format and a
+more efficient binary format.
+
+% TODO: Define embedders, VMs
+
+In order to interact with the environment, WebAssembly embeddings
+expose functionality via application programming interfaces (APIs):
+defined functions that WebAssembly can use to interact with the environment.
+With the Web as the primary embedding environment, Web embeddings provide
+a defined JavaScript API that allows interaction between web pages.
+
+WebAssembly provides safety guarantees by fully encapsulating logic and execution
+at a low level.
+Values consist of only 32- and 64-bit variants of integers and floating point
+numbers\cite[p. 2--3]{WasmSpec}.
+The operational semantics of the language is primarily that of a stack machine,
+wherein operations are performed by removing operands from a last-in-first-out
+stack of values and pushing the operation's result onto the stack afterward.
+Strictly speaking this is not completely true, as the language's inclusion of
+local variables allows circumvention of completely stack-based
+execution\cite{WasmNotStackMachine}.
+This has led to challenges for implementors of Lightbeam, an optimizing streaming
+WebAssembly compiler\cite{IntroducingLightbeam}.
+
+Memory operations are fully sandboxed by the WebAssembly execution environment.
+
+% More advanced datatypes can be supported by building upon
+% the fundamental language components.
+
+
+Embedding environments are free to expose any level of functionality to WebAssembly.
+
+% TODO: Describe memory model
+
+\section{Non-Web Embeddings}
+
+As its name implies, its primary focus is Web-based software; however it is not
+specific or tied to the Web.
+Other non-Web environments execute WebAssembly for a variety of reasons: its
+safe memory model, its high performance, and it being a universal, encapsulated,
+and independent compile target.
+The last is particularly interesting given its bidirectional implications: a
+programmer can truly write and compile a piece of software once and run it
+nearly anywhere; and a programmer can depend on other software written in any
+language that supports WebAssembly.
+
+WASI (WebAssembly System Interface) is a project that defines a family of APIs
+for WebAssembly to interact with a traditional system environment to perform
+common, core tasks such as interaction with the filesystem and networking\cite{WasiOverview}.
+These APIs are designed to be a common target for embedders to support, allowing optimal
+portability of systems-focused WebAssembly programs.
+
 
 \section{Evolving WebAssembly}
 
@@ -122,12 +181,15 @@ of phases\cite{WasmW3CProcess}:
 \chapter{Soundness}
 
 Core WebAssembly's type system has been proven sound both via a natural language
-proof\cite[p. 140]{WasmSpec} and via a mechanization in Isabelle\cite{WattMechanizing}.
-This work builds on the latter, extending the initial
-mechanization of the core language to include extensions provided by several proposed
-extensions.
+proof\cite[p. 140]{WasmSpec}.
+
+A mechanized proof in Isabelle supports the proofs with a high level of
+eyeball-closeness\cite{WattMechanizing}.
 
 \chapter{Incremental Soundness} % TODO
+
+This work builds on the existing Isabelle proof of the core language, extending the initial
+mechanization to include extensions provided by several late-stage proposals.
 
 \section{Sign Extenion Operations} % TODO
 
