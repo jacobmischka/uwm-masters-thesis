@@ -193,12 +193,32 @@ eyeball-closeness\cite{WattMechanizing}.
 
 This work builds on the existing Isabelle proof of the core language, extending the initial
 mechanization to include extensions provided by several late-stage proposals.
-
-\section{Sign Extenion Operations} % TODO
+At the outset of this project, two (non-trapping int-to-float conversions and sign exension operations)
+were at stage 4, though have been moved to stage 5 and have been integrated into the WebAssembly
+specification as of April 9 2020\cite{Phase5Advancement}.
 
 \section{Non-trapping Int-to-Float Conversions} % TODO
 
+\section{Sign Extension Operations} % TODO
+
 \section{Tail Call} % TODO
+
+On the surface, this proposal seems almost as straightforward as the previous two:
+it adds new instructions that combine already existing behavior.
+
+During the mechanization of this proposal, a mistake in the specification was noticed.
+Before unwinding the stack when performing the return portion of the operation,
+the values which are to be passed to the function being tail-invoked must first
+be removed and then replaced after the frame of the ending function body is removed.
+Before popping these values off the stack, it must be asserted that these values exist
+in the correct number ($n$).
+Initially, the specification mistakenly required that the stack must contain values
+in number of the tail-invoked function's returned type instead of its input type,
+but correctly removed $n$ values.
+Thus, as initially written, the operation performed the correct operation, but did not check
+that it was possible beforehand, resulting in unsafe operation.
+This mistake was brought to the attention of the maintainers and was fixed
+shortly thereafter\cite{TailInvokeIssue10}.
 
 \chapter{Conclusions} % TODO
 
