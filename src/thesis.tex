@@ -193,11 +193,45 @@ eyeball-closeness\cite{WattMechanizing}.
 
 This work builds on the existing Isabelle proof of the core language, extending the initial
 mechanization to include extensions provided by several late-stage proposals.
-At the outset of this project, two (non-trapping int-to-float conversions and sign exension operations)
+At the outset of this project, two (non-trapping int-to-float
+conversions\cite{NontrappingFloatToIntProposal} and sign exension
+operations\cite{SignExtensionOpsProposal})
 were at stage 4, though have been moved to stage 5 and have been integrated into the WebAssembly
 specification as of April 9 2020\cite{Phase5Advancement}.
 
 \section{Non-trapping Int-to-Float Conversions} % TODO
+
+The first of the three mechanized, this proposal introduces 8 new saturating
+float truncation instructions; one for each of the combination of the three
+associated variables in the form \texttt{i32.trunc\_sat\_f32\_s}:
+float type (32- or 64-bit), integer type (32- or 64-bit),
+and signedness (signed or unsigned)\cite{NontrappingFloatToIntOverview}.
+Non-saturating versions of these instructions were present in the initial
+release of WebAssembly, though were defined to trap in the event that
+the floating point number could not be represented in the target integer type's
+possible range of values, or in the event that the floating point number was
+\texttt{NaN}.
+These new instructions instead simply return the minimum or maximum target integer
+value in case of underflow or overflow, and 0 in the event that the source floating
+point number is \texttt{NaN}.
+
+The mechanization for the original \texttt{convert} instructions return an
+\texttt{Option} value, indicating \texttt{Some} value if the conversion
+succeeded or \texttt{None} otherwise.
+Because these new instructions do not trap, I initially wanted to model my
+\texttt{convert\_sat} collection of operations so that they did not return an
+\texttt{Option} and simply returned a value in all cases.
+This was a mistake, as \texttt{convert} returned \texttt{None} not only
+when the conversion failed, but also when no such instruction exists
+to perform the conversion.
+In order for the new saturating conversion function to fit nicely
+into the original mechanization, it needed to be able to return \texttt{None}
+when the operation was impossible, such as converting to the same type as
+the original input type.
+After struggling for a while, reverting \texttt{convert\_sat} to return an
+\texttt{Option} but simply always returning \texttt{Some} value when performing
+a truncation resulted in a straightforward addition which maintained the
+language's proof of soundness.
 
 \section{Sign Extension Operations} % TODO
 
