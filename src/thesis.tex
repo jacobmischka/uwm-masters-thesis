@@ -199,41 +199,94 @@ operations\cite{SignExtensionOpsProposal})
 were at stage 4, though have been moved to stage 5 and have been integrated into the WebAssembly
 specification as of April 9 2020\cite{Phase5Advancement}.
 
-\section{Non-trapping Int-to-Float Conversions} % TODO
+\section{Non-trapping Float-to-Int Conversions} % TODO
 
 The first of the three mechanized, this proposal introduces 8 new saturating
-float truncation instructions; one for each of the combination of the three
-associated variables in the form \texttt{i32.trunc\_sat\_f32\_s}:
-float type (32- or 64-bit), integer type (32- or 64-bit),
-and signedness (signed or unsigned)\cite{NontrappingFloatToIntOverview}.
+floating point truncation instructions of the form \\
+\texttt{\textit{(destination type)}.trunc\_sat\_\textit{(source type)}\_\textit{(signedness)}}%
+\cite{NontrappingFloatToIntOverview}:
+
+\begin{itemize}
+	\item \texttt{i32.trunc\_sat\_f32\_s}
+	\item \texttt{i32.trunc\_sat\_f32\_u}
+	\item \texttt{i32.trunc\_sat\_f64\_s}
+	\item \texttt{i32.trunc\_sat\_f64\_u}
+	\item \texttt{i64.trunc\_sat\_f32\_s}
+	\item \texttt{i64.trunc\_sat\_f32\_u}
+	\item \texttt{i64.trunc\_sat\_f64\_s}
+	\item \texttt{i64.trunc\_sat\_f64\_u}
+\end{itemize}
+
 Non-saturating versions of these instructions were present in the initial
 release of WebAssembly, though were defined to trap in the event that
 the floating point number could not be represented in the target integer type's
 possible range of values, or in the event that the floating point number was
 \texttt{NaN}.
-These new instructions instead simply return the minimum or maximum target integer
+These new instructions instead return the minimum or maximum target integer
 value in case of underflow or overflow, and 0 in the event that the source floating
-point number is \texttt{NaN}.
+point number is \texttt{NaN}, resulting in operations that never fail.
 
-The mechanization for the original \texttt{convert} instructions return an
-\texttt{Option} value, indicating \texttt{Some} value if the conversion
-succeeded or \texttt{None} otherwise.
-Because these new instructions do not trap, I initially wanted to model my
+In the original mechanization, all numeric conversion instructions are
+handled in a single \texttt{convert} function, which performs the appropriate
+operations for the given instruction.
+Because the non-saturating truncation instructions can fail, resulting in a trap,
+this function returns an \texttt{Option} value, indicating \texttt{Some} value
+if the conversion succeeded or \texttt{None} otherwise.
+Because these new instructions do not trap, I initially set out to model the
 \texttt{convert\_sat} collection of operations so that they did not return an
 \texttt{Option} and simply returned a value in all cases.
-This was a mistake, as \texttt{convert} returned \texttt{None} not only
+This was a mistake, as \texttt{convert} returns \texttt{None} not only
 when the conversion failed, but also when no such instruction exists
-to perform the conversion.
+to perform the conversion for the given types, such as a hypothetical
+conversion from an \texttt{f64} to an \texttt{f64}.
 In order for the new saturating conversion function to fit nicely
-into the original mechanization, it needed to be able to return \texttt{None}
+into the existing mechanization, it must to be able to return \texttt{None}
 when the operation was impossible, such as converting to the same type as
 the original input type.
-After struggling for a while, reverting \texttt{convert\_sat} to return an
-\texttt{Option} but simply always returning \texttt{Some} value when performing
+After struggling to modify the surrounding proofs to handle such impossible
+conversions elsewhere, reverting \texttt{convert\_sat} to return an
+\texttt{Option} but always returning \texttt{Some} value when performing
 a truncation resulted in a straightforward addition which maintained the
-language's proof of soundness.
+language's proof of soundness without requiring drastic changes to the
+surrounding theorems and lemmas.
 
-\section{Sign Extension Operations} % TODO
+\section{Sign Extension Operators} % TODO
+
+Similarly to the previous proposal, the Sign Extension Operators proposal
+introduces several new numeric conversion operations which are similar to
+existing instructions\cite{SignExtensionOpsOverview}:
+
+\begin{itemize}
+	\item \texttt{i32.extend8\_s}: extend a signed 8-bit integer to a 32-bit integer
+	\item \texttt{i32.extend16\_s}: extend a signed 16-bit integer to a 32-bit integer
+	\item \texttt{i64.extend8\_s}: extend a signed 8-bit integer to a 64-bit integer
+	\item \texttt{i64.extend16\_s}: extend a signed 16-bit integer to a 64-bit integer
+	\item \texttt{i64.extend32\_s}: extend a signed 32-bit integer to a 64-bit integer
+\end{itemize}
+
+Already present in the MVP release of WebAssembly are \texttt{i64.extend\_s}
+and \texttt{i64.extend\_u}\cite[p. 11]{WasmSpec}, for extending a 32-bit
+integer value (signed or unsigned, respectively) to a 64-bit integer value.
+At first inspection, this seems like the only extension operations required,
+as WebAssembly only supports 32- and 64-bit integers.
+These new instructions, by contrast, do not actually modify the type of the
+value, instead only its contents: \texttt{i32.extend8\_s} receives an
+\texttt{i32} as input and returns an \texttt{i32} as output.
+These new instructions reinterpret the contents of a value, operating
+on smaller signed integer values packed inside the bits of one of
+WebAssembly's integer types.
+%                     ↓ Impossible?
+While such cases are unlikely when using pure WebAssembly,
+interaction with other environments or languages may result in
+such values existing.
+
+The distinction is initially confusing.
+In fact, the distinction was even missed in initial discussions for this
+proposal, resulting in \texttt{i64.extend32\_s} being dismissed as equivalent
+to the existing \texttt{i64.extend\_s} instruction.
+However, because the former receives a 32-bit integer as input, the latter
+is indeed a distinct operation, and was hence added to the proposal
+afterward\cite{SignExtensionOpsOverview}.
 
 \section{Tail Call} % TODO
 
