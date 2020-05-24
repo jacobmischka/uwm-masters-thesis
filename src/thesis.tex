@@ -1,6 +1,12 @@
 \documentclass[12pt]{report}
 \usepackage{uwmthesis}
 \usepackage[colorlinks=true]{hyperref}
+\usepackage{stmaryrd}
+\usepackage{listings}
+\lstset{
+	mathescape,
+	basicstyle=\small
+}
 
 \usepackage[square,numbers]{natbib}
 \bibliographystyle{plainnat}
@@ -147,6 +153,7 @@ discussing, and implementing additional features for WebAssembly\cite{WasmFuture
 For a feature to be adopted into the language, a proposal must be drafted which passes through a sequence
 of phases\cite{WasmW3CProcess}:
 
+% FIXME: Update this when https://github.com/WebAssembly/meetings/pull/561 is merged
 \begin{enumerate}
 	\item[0] \textbf{Pre-Proposal}:
 		A Community Group member files
@@ -184,20 +191,40 @@ of phases\cite{WasmW3CProcess}:
 \chapter{Soundness}
 
 Core WebAssembly's type system has been proven sound both via a natural language
-proof\cite[p. 140]{WasmSpec}.
+proof\cite[p. 140]{WasmSpec}, as well as a mechanized proof in
+Isabelle\cite{WattMechanizing}.
+In addition to proving soundness of the core language via progress and
+preservation, the original mechanization included several notable
+additional properties.
 
-A mechanized proof in Isabelle supports the proofs with a high level of
-eyeball-closeness\cite{WattMechanizing}.
+Firstly, it included one proposal not existing in the initial version of the core language:
+the Multi-value Proposal\cite{MultiValueProposal}.
+In the original specification, functions and instructions can return at most one result.
+This restriction is removed by the Multi-value Proposal, allowing multiple return
+values for each\cite{MultiValueOverview}.
+
+In addition to the soundness proof of the core language, the initial mechanization
+included two separate modules which were also proven sound: an executable type
+checker\cite[p. 61]{WattMechanizing} and an executable
+interpreter\cite[p.62]{WattMechanizing}.
+
+
 
 \chapter{Incremental Soundness} % TODO
 
-This work builds on the existing Isabelle proof of the core language, extending the initial
+This work builds on the existing Isabelle proof, extending the initial
 mechanization to include extensions provided by several late-stage proposals.
+Definitions and proofs for the type checker and interpreter are also updated
+accordingly.
+
 At the outset of this project, two (non-trapping int-to-float
 conversions\cite{NontrappingFloatToIntProposal} and sign exension
-operations\cite{SignExtensionOpsProposal})
-were at stage 4, though have been moved to stage 5 and have been integrated into the WebAssembly
-specification as of April 9 2020\cite{Phase5Advancement}.
+operations\cite{SignExtensionOpsProposal}) of the newly-mechanized proposals,
+along with the multi-value proposal already present in the initial mechanization,
+were at stage 4 and have been moved to stage 5 and integrated
+into version 1.1 of the WebAssembly specification as of April 9,
+2020\cite{Phase5Advancement}.
+
 
 \section{Non-trapping Float-to-Int Conversions} % TODO
 
@@ -250,6 +277,26 @@ a truncation resulted in a straightforward addition which maintained the
 language's proof of soundness without requiring drastic changes to the
 surrounding theorems and lemmas.
 
+\begin{lstlisting}
+datatype
+  cvtop = Convert | ConvertSat | Reinterpret
+  ...
+(* TYPING RELATION *)
+inductive b_e_typing ::
+	"[t_context, b_e list, tf] $\Rightarrow$ bool" ("_ $\vdash$ _ : _" 60)
+where ...
+  | convert:"$\llbracket$(t1 $\neq$ t2); (sx = None) =
+	((is_float_t t1 $\land$ is_float_t t2)
+		$\lor$ (is_int_t t1 $\land$ is_int_t t2
+			$\land$ (t_length t1 < t_length t2)))$\rrbracket$
+	$\Longrightarrow$ $C$ $\vdash$ [Cvtop t1 Convert t2 sx] : ([t2] $\to$ [t1])"
+  | convert_sat:"$\llbracket$(t1 $\neq$ t2); (sx = None) =
+	((is_float_t t1 $\land$ is_float_t t2)
+		$\lor$ (is_int_t t1 $\land$ is_int_t t2
+			$\land$ (t_length t1 < t_length t2)))$\rrbracket$
+	$\Longrightarrow$ $C$ $\vdash$ [Cvtop t1 ConvertSat t2 sx] : ([t2] $\to$ [t1])"
+\end{lstlisting}
+
 \section{Sign Extension Operators} % TODO
 
 Similarly to the previous proposal, the Sign Extension Operators proposal
@@ -290,8 +337,10 @@ afterward\cite{SignExtensionOpsOverview}.
 
 \section{Tail Call} % TODO
 
-On the surface, this proposal seems almost as straightforward as the previous two:
-it adds new instructions that combine already existing behavior.
+On the surface, this proposal seems almost as straightforward as the previous two.
+The new instructions do not introduce any completely new behavior, they merely
+combine existing behavior.
+Core WebAssembly explicitly disallows tail call optimizations
 
 During the mechanization of this proposal, a mistake in the specification was noticed.
 Before unwinding the stack when performing the return portion of the operation,
