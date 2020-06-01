@@ -2,6 +2,7 @@
 \usepackage{uwmthesis}
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{stmaryrd}
+\usepackage[T1]{fontenc}
 \usepackage{listings}
 \lstset{
 	mathescape,
@@ -244,7 +245,7 @@ interpreter\cite[p.62]{WattMechanizing}.
 My project builds on the existing Isabelle proof, extending the initial
 mechanization to include extensions provided by three late-stage proposals:
 Non-trapping Float-to-Int Conversions\cite{NontrappingFloatToIntProposal},
-Sign Exension Operations\cite{SignExtensionOpsProposal},
+Sign Extension Operations\cite{SignExtensionOpsProposal},
 and Tail Call\cite{TailCallProposal}.
 Definitions and proofs for the type checker and interpreter are also updated
 accordingly.
@@ -265,7 +266,7 @@ phase\cite{WasmProposals}.
 
 The first of the three mechanized, this proposal introduces 8 new saturating
 floating point truncation instructions of the form \\
-\texttt{\textit{(destination type)}.trunc\_sat\_\textit{(source type)}\_\textit{(signedness)}}%
+\textit{(destination type)}\texttt{.trunc\_sat\_}\textit{(source type)}\texttt{\_}\textit{(signedness)}%
 \cite{NontrappingFloatToIntOverview}:
 
 \begin{itemize}
@@ -280,7 +281,7 @@ floating point truncation instructions of the form \\
 \end{itemize}
 
 Non-saturating versions of these instructions were present in the initial
-release of WebAssembly, though were defined to trap in the event that
+release of WebAssembly, and were defined to trap in the event that
 the floating point number could not be represented in the target integer type's
 possible range of values, or in the event that the floating point number was
 \texttt{NaN}.
@@ -292,8 +293,9 @@ In the original mechanization, all numeric conversion instructions are
 handled in a single \texttt{convert} function, which performs the appropriate
 operations for the given instruction.
 Because the non-saturating truncation instructions can fail, resulting in a trap,
-this function returns an \texttt{Option} value, indicating \texttt{Some} value
-if the conversion succeeded or \texttt{None} otherwise.
+\texttt{convert} returns an \texttt{Option} value, indicating \texttt{Some} value
+if the conversion succeeded or \texttt{None} otherwise, indicating an impossible
+conversion, or a conversion operation that failed and trapped.
 Because these new instructions do not trap, I initially set out to model the
 \texttt{convert\_sat} collection of operations so that they did not return an
 \texttt{Option} and simply returned a value in all cases.
@@ -353,7 +355,7 @@ At first inspection, this seems like the only extension operations required,
 as WebAssembly only supports 32- and 64-bit integers.
 These new instructions, by contrast, do not actually modify the type of the
 value, instead only its contents: \texttt{i32.extend8\_s} receives an
-\texttt{i32} as input and returns an \texttt{i32} as output.
+\texttt{i32} type as input and returns an \texttt{i32} type as output.
 These new instructions reinterpret the contents of a value, operating
 on smaller signed integer values packed inside the bits of one of
 WebAssembly's integer types.
@@ -362,12 +364,18 @@ While such cases are unlikely when using pure WebAssembly,
 interaction with other environments or languages may result in
 such values existing.
 
-The distinction is initially confusing.
+The distinction is confusing.
 In fact, the distinction was even missed in initial discussions for this
 proposal, resulting in \texttt{i64.extend32\_s} being dismissed as equivalent
 to the existing \texttt{i64.extend\_s} instruction.
-However, because the former receives a 32-bit integer as input, the latter
-is indeed a distinct operation, and was hence added to the proposal
+However, \texttt{i64.extend\_s} receives an \texttt{i32} type as input, returning
+an \texttt{i64} type.
+This contrasts with the behavior of the added instructions, which do not change
+the type of the input but instead reinterpret its contents.
+As such, \texttt{i64.extend32\_s} receives an \texttt{i64} type containing
+the bits of a signed 32-bit integer and reinterprets it, without changing
+the container's type, to an \texttt{i64} type containing a signed 64-bit integer.
+This is indeed a distinct operation, and was hence added to the proposal
 afterward\cite{SignExtensionOpsOverview}.
 
 \section{Tail Call} % TODO
