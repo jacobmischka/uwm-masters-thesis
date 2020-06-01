@@ -191,12 +191,37 @@ of phases\cite{WasmW3CProcess}:
 		Consensus is reached by the Working Group that the feature is complete.
 \end{enumerate}
 
+\chapter{Proof Mechanization} % TODO
 
 \chapter{Soundness}
+
+Typically, a programming language's type system is considered \textit{safe} or
+\textit{sound} when it exhibits the following two primary properties\cite{pfpl2}:
+
+\begin{enumerate}
+	\item \textit{Preservation}: If an expression is well-typed and performs
+		a step of evaluation, then the resulting expression maintains the
+		original type.
+	\item \textit{Progress}: If an expression is well-typed, it either
+		has been reduced to a value, or it can be further evaluated.
+\end{enumerate}
 
 Core WebAssembly's type system has been proven sound both via a natural language
 proof\cite[p. 140]{WasmSpec}, as well as a mechanized proof in
 Isabelle\cite{WattMechanizing}.
+
+\citeauthor{WattMechanizing}'s mechanization of core WebAssembly took place
+separately from the development of the language, though proved crucial in
+its foundation by identifying several major errors in the official WebAssembly
+specification.
+These issues were brought to the attention of the Working Group and
+fixed, resulting in foundational language features such as exception propagation
+and the \texttt{Return} operation to be rewritten\cite[p. 60-61]{WattMechanizing}.
+Additionally, the declared requirements of host functions, functions provided
+by the embedding environment that can be called by WebAssembly code, were
+discovered to be too weak to maintain type safety and rewritten as a
+result\cite[p. 61]{WattMechanizing}.
+
 In addition to proving soundness of the core language via progress and
 preservation, the original mechanization included several notable
 additional properties.
@@ -216,18 +241,24 @@ interpreter\cite[p.62]{WattMechanizing}.
 
 \chapter{Incremental Soundness} % TODO
 
-This work builds on the existing Isabelle proof, extending the initial
-mechanization to include extensions provided by several late-stage proposals.
+My project builds on the existing Isabelle proof, extending the initial
+mechanization to include extensions provided by three late-stage proposals:
+Non-trapping Float-to-Int Conversions\cite{NontrappingFloatToIntProposal},
+Sign Exension Operations\cite{SignExtensionOpsProposal},
+and Tail Call\cite{TailCallProposal}.
 Definitions and proofs for the type checker and interpreter are also updated
 accordingly.
 
-At the outset of this project, two (non-trapping int-to-float
-conversions\cite{NontrappingFloatToIntProposal} and sign exension
-operations\cite{SignExtensionOpsProposal}) of the newly-mechanized proposals,
-along with the multi-value proposal already present in the initial mechanization,
-were at stage 4 and have been moved to stage 5 and integrated
+At the outset of my mechanization, two of the newly-mechanized proposals,
+non-trapping float-to-int conversions and sign extension operations,
+were at phase 4.
+After the mechanized proofs were completed as part of this project,
+they (along with the multi-value proposal already present in the initial
+mechanization), have advanced to phase 5 and were fully integrated
 into version 1.1 of the WebAssembly specification as of April 9,
 2020\cite{Phase5Advancement}.
+Tail call remains a phase 3 proposal currently in the implementation
+phase\cite{WasmProposals}.
 
 
 \section{Non-trapping Float-to-Int Conversions} % TODO
@@ -341,12 +372,14 @@ afterward\cite{SignExtensionOpsOverview}.
 
 \section{Tail Call} % TODO
 
-On the surface, this proposal seems almost as straightforward as the previous two.
-The new instructions do not introduce any completely new behavior, they merely
-combine existing behavior.
-Core WebAssembly explicitly disallows tail call optimizations
+Like the previous two proposals mechanized in this project, the Tail Call
+proposal also does not introduce any completely new behavior.
+Core WebAssembly explicitly disallows tail-call optimizations
 
-During the mechanization of this proposal, a mistake in the specification was noticed.
+% FIXME: Should I say "I"?
+While performing the modeling for the mechanization, I encountered a mistake in the
+proposal's specification.
+
 Before unwinding the stack when performing the return portion of the operation,
 the values which are to be passed to the function being tail-invoked must first
 be removed and then replaced after the frame of the ending function body is removed.
@@ -359,6 +392,11 @@ Thus, as initially written, the operation performed the correct operation, but d
 that it was possible beforehand, resulting in unsafe operation.
 This mistake was brought to the attention of the maintainers and was fixed
 shortly thereafter\cite{TailInvokeIssue10}.
+
+While the oversight was relatively minor in terms of size, only a single letter's
+difference, finding otherwise easily-overlooked mistakes is one of the primary
+strengths of mechanization in proofs.
+
 
 \chapter{Conclusions} % TODO
 
