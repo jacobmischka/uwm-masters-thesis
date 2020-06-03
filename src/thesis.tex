@@ -112,12 +112,69 @@ This has led to challenges for implementors of Lightbeam, an optimizing streamin
 WebAssembly compiler\cite{IntroducingLightbeam}.
 
 Memory operations are fully sandboxed by the WebAssembly execution environment.
-
-% More advanced datatypes can be supported by building upon
-% the fundamental language components.
-
+WebAssembly memories are single lists of raw bytes\cite[p. 16]{WasmSpec}.
+Each WebAssembly module can include a single memory vector, and any
+computations the module performs that requires memory utilizes this list
+of bytes, no direct access of the underlying system's physical or virtual memory
+is permitted.
 
 Embedding environments are free to expose any level of functionality to WebAssembly.
+This is enabled by the concept of \textit{host functions}, functions provided by
+the environment that can be invoked by WebAssembly code.
+Host functions can receive and return values like regular functions, though they can
+also modify the store\cite[p. 78]{WasmSpec}.
+WebAssembly itself provides no guarantees about the determinism of host functions.
+As far as WebAssembly is concerned, such functions can be assumed to succeed or
+fail arbitrarily at the whims of the embedding environment.
+If the function call succeeds, a compliant embedding environment is required to
+correctly remove the expected number of arguments from the stack, and return
+the declared number of values.
+If the store is modified, the resulting store must be an extension of the previous
+store, with only mutable contents modified and no contents removed, and its contents
+must be well-typed.
+Examples of host functions include functions for reading and writing system files or
+performing network operations in a non-Web environment.
+
+
+\section{Past experiments}
+
+The concept of an alternative to JavaScript for running applications on the Web is not entirely new.
+Two previous notable examples, embedded Flash applications and Java Applets, were once-popular
+ways to write software that others could run in a web browser using other programming languages.
+While they are similar in concept to WebAssembly, there are several fundamental differences that
+allowed them to fall out of favor and eventually lead to the development of WebAssembly.
+
+Firstly and primarily, both Flash and Java Applets were individual projects by
+single organizations, Adobe and Oracle respectively, that operated in web browsers through
+the use of plugins.
+They were not \textit{part} of the standardized Web, they were instead isolated
+boxes that ran inside of web pages once a user installed a separate piece of software
+into their browsers that allowed them to work.
+
+Secondly, because they were executed by their corresponding plugins,
+such applications were unable to interact with the Web's Document Object Model.
+They could not manipulate elements on the page or respond to events.
+
+While WebAssembly is a language in itself that one could write directly,
+it was designed from the beginning to be a standard compile target.
+While it is possible to compile other languages to be executable by
+the Java Virtual Machine and thus run in Java Applets, doing so is
+analogous to compiling other languages to JavaScript so they can be executed on the
+Web---not a first class way of writing software.
+
+While WebAssembly does require its own execution environment
+similarly to Flash and Java Applets, on the Web this environment is intertwined
+heavily with existing JavaScript engines.
+
+Finally, as previously mentioned, WebAssembly was designed with a major goal of
+high performance.
+
+Flash fell out of favor largely due to the release of the iPhone and its
+intentional lack of support for Flash applications in its web browsers, along with
+the advancement of more powerful open and standardized Web platform
+features\cite{FlashKilledOff}.
+Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of the
+above reasons for his refusal to provide support\cite{ThoughtsOnFlash}.
 
 % TODO: Describe memory model
 
@@ -137,8 +194,13 @@ WASI (WebAssembly System Interface) is a project that defines a family of APIs
 for WebAssembly to interact with a traditional system environment to perform
 common, core tasks such as interaction with the filesystem and networking\cite{WasiOverview}.
 These APIs are designed to be a common target for embedders to support, allowing optimal
-portability of systems-focused WebAssembly programs.
+portability of systems-focused WebAssembly programs while maintaining the security and
+sandboxing of the WebAssembly platform\cite{StandardizingWasi}.
 
+WASI's
+\href{https://github.com/WebAssembly/WASI/blob/master/phases/snapshot/docs.md#-fd_readdirfd-fd-buf-pointeru8-buf_len-size-cookie-dircookie---errno-size}{\texttt{fd\_readdir}},
+for example, is a host function that allows WebAssembly code to read the contents of a directory
+on the environment's filesystem.
 
 \section{Evolving WebAssembly}
 
@@ -207,9 +269,12 @@ Typically, a programming language's type system is considered \textit{safe} or
 		has been reduced to a value, or it can be further evaluated.
 \end{enumerate}
 
-Core WebAssembly's type system has been proven sound both via a natural language
-proof\cite[p. 140]{WasmSpec}, as well as a mechanized proof in
-Isabelle\cite{WattMechanizing}.
+Core WebAssembly's type system is proved to be sound via a natural language
+proof included in the specification\cite[p. 140]{WasmSpec}.
+No additions will be allowed to the specification that knowingly violate
+WebAssembly's soundness guarantees.
+In order to confirm the soundness claims made by the rather terse proof,
+a mechanized proof in Isabelle was developed separately\cite{WattMechanizing}.
 
 \citeauthor{WattMechanizing}'s mechanization of core WebAssembly took place
 separately from the development of the language, though proved crucial in
