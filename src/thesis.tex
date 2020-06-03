@@ -100,8 +100,8 @@ a defined JavaScript API that allows interaction between web pages.
 
 WebAssembly provides safety guarantees by fully encapsulating logic and execution
 at a low level.
-Values consist of only 32- and 64-bit variants of integers and floating point
-numbers\cite[p. 2--3]{WasmSpec}.
+Values consist of only 32- and 64-bit variants of integers and IEEE 754
+floating point numbers\cite[p. 2--3]{WasmSpec}.
 The operational semantics of the language is primarily that of a stack machine,
 wherein operations are performed by removing operands from a last-in-first-out
 stack of values and pushing the operation's result onto the stack afterward.
@@ -239,7 +239,6 @@ checker\cite[p. 61]{WattMechanizing} and an executable
 interpreter\cite[p.62]{WattMechanizing}.
 
 
-
 \chapter{Incremental Soundness} % TODO
 
 My project builds on the existing Isabelle proof, extending the initial
@@ -264,7 +263,7 @@ phase\cite{WasmProposals}.
 
 \section{Non-trapping Float-to-Int Conversions} % TODO
 
-The first of the three mechanized, this proposal introduces 8 new saturating
+The first of the three mechanized, this proposal introduces 8 new
 floating point truncation instructions of the form \\
 \textit{(destination type)}\texttt{.trunc\_sat\_}\textit{(source type)}\texttt{\_}\textit{(signedness)}%
 \cite{NontrappingFloatToIntOverview}:
@@ -280,14 +279,18 @@ floating point truncation instructions of the form \\
 	\item \texttt{i64.trunc\_sat\_f64\_u}
 \end{itemize}
 
+These new instructions are \textit{saturating}, meaning that their results are
+limited to the maximum or minimum possible value for the given destination type.
 Non-saturating versions of these instructions were present in the initial
 release of WebAssembly, and were defined to trap in the event that
 the floating point number could not be represented in the target integer type's
 possible range of values, or in the event that the floating point number was
-\texttt{NaN}.
-These new instructions instead return the minimum or maximum target integer
-value in case of underflow or overflow, and 0 in the event that the source floating
-point number is \texttt{NaN}, resulting in operations that never fail.
+the special ``not a number'' value as defined by the IEEE floating point standard
+(\texttt{NaN}).
+Instead of trapping, these new instructions instead return the minimum or
+maximum target integer value in case of underflow or overflow, and 0 in the
+event that the source floating point number is \texttt{NaN}, resulting in
+operations that never fail.
 
 In the original mechanization, all numeric conversion instructions are
 handled in a single \texttt{convert} function, which performs the appropriate
@@ -313,26 +316,6 @@ conversions elsewhere, reverting \texttt{convert\_sat} to return an
 a truncation resulted in a straightforward addition which maintained the
 language's proof of soundness without requiring drastic changes to the
 surrounding theorems and lemmas.
-
-\begin{lstlisting}
-datatype
-  cvtop = Convert | ConvertSat | Reinterpret
-  ...
-(* TYPING RELATION *)
-inductive b_e_typing ::
-	"[t_context, b_e list, tf] $\Rightarrow$ bool" ("_ $\vdash$ _ : _" 60)
-where ...
-  | convert:"$\llbracket$(t1 $\neq$ t2); (sx = None) =
-	((is_float_t t1 $\land$ is_float_t t2)
-		$\lor$ (is_int_t t1 $\land$ is_int_t t2
-			$\land$ (t_length t1 < t_length t2)))$\rrbracket$
-	$\Longrightarrow$ $C$ $\vdash$ [Cvtop t1 Convert t2 sx] : ([t2] $\to$ [t1])"
-  | convert_sat:"$\llbracket$(t1 $\neq$ t2); (sx = None) =
-	((is_float_t t1 $\land$ is_float_t t2)
-		$\lor$ (is_int_t t1 $\land$ is_int_t t2
-			$\land$ (t_length t1 < t_length t2)))$\rrbracket$
-	$\Longrightarrow$ $C$ $\vdash$ [Cvtop t1 ConvertSat t2 sx] : ([t2] $\to$ [t1])"
-\end{lstlisting}
 
 \section{Sign Extension Operators} % TODO
 
@@ -382,12 +365,12 @@ afterward\cite{SignExtensionOpsOverview}.
 
 Like the previous two proposals mechanized in this project, the Tail Call
 proposal also does not introduce any completely new behavior.
-Core WebAssembly explicitly disallows tail-call optimizations
+Core WebAssembly explicitly disallows tail-call optimizations for
+functions that return the result of a function call.
 
 % FIXME: Should I say "I"?
-While performing the modeling for the mechanization, I encountered a mistake in the
-proposal's specification.
-
+While performing the modeling for the proposal's mechanization, I encountered a
+mistake in the proposed specification.
 Before unwinding the stack when performing the return portion of the operation,
 the values which are to be passed to the function being tail-invoked must first
 be removed and then replaced after the frame of the ending function body is removed.
@@ -404,7 +387,8 @@ shortly thereafter\cite{TailInvokeIssue10}.
 While the oversight was relatively minor in terms of size, only a single letter's
 difference, finding otherwise easily-overlooked mistakes is one of the primary
 strengths of mechanization in proofs.
-
+Whereas the human eye can easily disregard a small typo or gloss over that
+seems obvious, proof assistants insist that everything be proved without a doubt.
 
 \chapter{Conclusions} % TODO
 
