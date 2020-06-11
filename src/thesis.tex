@@ -230,16 +230,18 @@ of phases\cite{WasmW3CProcess}:
 		a proposal repository is created in the WebAssembly GitHub organization.
 
 	\item[1] \textbf{Feature Proposal}:
-		The proposal's repository is used to facilitate discussion about, and design and specification
-		of, the feature.
+		The proposal's repository is used to facilitate discussion about, and
+		design and specification of, the feature.
 
 	\item[2] \textbf{Proposed Specification Text Available}:
-		Once the full proposed English specification text is available, prototype implementations
-		for are created so that a test suite can be added for the new feature.
+		Once the full proposed English specification text is available,
+		prototype implementations for are created so that a test suite can be
+		added for the new feature.
 
 	\item[3] \textbf{Implementation Phase}:
-		After a satisfactory test suite is created and passes for the feature in some implementation,
-		embedders implement the feature and integrate the changes into the reference WebAssembly interpreter.
+		After a satisfactory test suite is created and passes for the feature
+		in some implementation, embedders implement the feature and integrate
+		the changes into the reference WebAssembly interpreter.
 
 	\item[4] \textbf{Standardize the Feature}:
 		After Web VMs and toolchains implement the feature and
@@ -253,6 +255,45 @@ of phases\cite{WasmW3CProcess}:
 	\item[5] \textbf{The Feature is Standardized}:
 		Consensus is reached by the Working Group that the feature is complete.
 \end{enumerate}
+
+In practice, in order to be deliberate about changes to the language, proposals can
+take a great deal of time before reaching phase 5 and being fully integrated into
+the WebAssembly specification.
+As of the time of this writing, only five proposals have done
+so\cite{FinishedProposals}.
+The first such proposal was standardized relatively early in WebAssembly's
+life---prior even to the initial 1.0 release---with the mutable globals
+proposal\cite{MutableGlobalProposal} on June 6, 2018\cite{MeetingNotes2018-06-06}.
+The multi-value proposal, which was in phase 4 at the time of the original
+mechanization and already included in it, and the non-trapping float-to-int and
+sign-extension operators proposals mechanized in this project were all integrated
+at once on March 11, 2020\cite{MeetingNotes2020-03-11}.
+Finally, the JavaScript BigInt to WebAssembly i64 Integration
+proposal\cite{JSBigIntProposal}, a proposal which does not modify
+the core WebAssembly language itself but the JavaScript API,
+advanced on June 9, 2020\cite{MailingList2020-06-09}.
+There are 23 currently outstanding proposals: 6 in phase 3, 4 in phase 2,
+9 in phase 1, and 4 in the pre-proposal phase 0\cite{WasmProposals}.
+
+Proposals may introduce relatively minor behavior changes or describe
+major substantive modifications to the language.
+No proposal is too small to be considered, though conversely larger
+proposals with greater surface area require more deliberation and agreement
+before being accepted.
+
+Proposals may depend on one another.
+For example, a notable proposal for Interface Types adds functionality to
+describe high-level non-primitive values such as strings or records
+so that values of these types can be passed between WebAssembly
+modules\cite{InterfaceTypesProposalExplainer}.
+Because these types are not primitive value types supported by WebAssembly
+such as integers or floating point numbers, there must be way to refer
+to these constructs indirectly.
+Thus, the Interface Types proposal depends on the Reference Types
+proposal, which adds typed reference values for functions and other external
+types\cite{ReferenceTypesProposalOverview}.
+
+% TODO: Describe video calls, voting, biweekly meetings for various groups
 
 \chapter{Proof Mechanization} % TODO
 
