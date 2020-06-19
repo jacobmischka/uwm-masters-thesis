@@ -169,12 +169,14 @@ heavily with existing JavaScript engines.
 Finally, as previously mentioned, WebAssembly was designed with a major goal of
 high performance.
 
-Flash fell out of favor largely due to the release of the iPhone and its
-intentional lack of support for Flash applications in its web browsers, along with
+Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of
+the above reasons for his refusal to provide support for Flash on iPhone
+devices\cite{ThoughtsOnFlash}.
+This lack of support on the popular devices, along with
 the advancement of more powerful open and standardized Web platform
-features\cite{FlashKilledOff}.
-Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of the
-above reasons for his refusal to provide support\cite{ThoughtsOnFlash}.
+features, resulted in Flash falling out of favor\cite{FlashKilledOff}.
+Flash was deprecated in 2017 by Adobe, with an end-of-life date of
+December 2020\cite{FlashFuture}.
 
 % TODO: Describe memory model
 
@@ -347,8 +349,9 @@ Core WebAssembly's type system is proved to be sound via a natural language
 proof included in the specification\cite[p. 140]{WasmSpec}.
 No additions will be allowed to the specification that knowingly violate
 WebAssembly's soundness guarantees.
-In order to confirm the soundness claims made by the rather terse proof,
-a mechanized proof in Isabelle was developed separately\cite{WattMechanizing}.
+In order to confirm the soundness claims made by the rather terse proof, a
+mechanized proof of the full language specification was developed
+independently, using the Isabelle/HOL proof assistant\cite{WattMechanizing}.
 
 \citeauthor{WattMechanizing}'s mechanization of core WebAssembly took place
 separately from the development of the language, though proved crucial in
@@ -450,11 +453,13 @@ into the existing mechanization, it must to be able to return \texttt{None}
 when the operation was impossible, such as converting to the same type as
 the original input type.
 After struggling to modify the surrounding proofs to handle such impossible
-conversions elsewhere, reverting \texttt{convert\_sat} to return an
-\texttt{Option} but always returning \texttt{Some} value when performing
-a truncation resulted in a straightforward addition which maintained the
-language's proof of soundness without requiring drastic changes to the
-surrounding theorems and lemmas.
+conversions elsewhere, I decided on a different course and reverted
+\texttt{convert\_sat} to return an \texttt{Option} like the non-saturating
+version, but which always returns \texttt{Some} value when performing a
+truncation.
+This resulted in a straightforward addition of less resistance, which
+maintains language's proof of soundness without requiring drastic changes to
+the existing theorems and lemmas.
 
 \section{Sign Extension Operators} % TODO
 
@@ -541,7 +546,7 @@ seems obvious, proof assistants insist that everything be proved without a doubt
 
 \clearpage
 
-\bibliography{thesis,wasm-cg}
+\bibliography{thesis,wasm-cg,proof-assistants}
 \addcontentsline{toc}{chapter}{Bibliography}
 
 \end{document}
