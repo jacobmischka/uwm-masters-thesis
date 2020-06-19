@@ -220,21 +220,24 @@ discussing, and implementing additional features for WebAssembly\cite{WasmFuture
 For a feature to be adopted into the language, a proposal must be drafted which passes through a sequence
 of phases\cite{WasmW3CProcess}:
 
-% FIXME: Update this when https://github.com/WebAssembly/meetings/pull/561 is merged
 \begin{enumerate}
 	\item[0] \textbf{Pre-Proposal}:
-		A Community Group member files
-		an issue to present the idea, and a proposal champion or champions
-		emerges which submits the proposal to the Community Group's biweekly agenda.
-		After being approved for general interest of research by the group,
-		a proposal repository is created in the WebAssembly GitHub organization.
+		An individual contributor files an issue to present the idea,
+		optionally adds the proposal to the proposal list, and a proposal
+		champion or champions emerges which submits the proposal to the
+		Community Group's biweekly agenda. The Community Group votes on general
+		interest in further research and development of the proposal.
 
 	\item[1] \textbf{Feature Proposal}:
-		The proposal's repository is used to facilitate discussion about, and
-		design and specification of, the feature.
+		After being approved by the Community Group, the proposal is added
+		to the proposal list if it has not been added already.
+		A new repository is forked from the main WebAssembly specification,
+		which is used to facilitate discussion about, and design and
+		specification of, the feature.
 
 	\item[2] \textbf{Proposed Specification Text Available}:
-		Once the full proposed English specification text is available,
+		Once the full proposed English specification text is available in the
+		proposal's repository, along with a reasonable community consensus,
 		prototype implementations for are created so that a test suite can be
 		added for the new feature.
 
