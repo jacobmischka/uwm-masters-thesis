@@ -517,23 +517,55 @@ afterward\cite{SignExtensionOpsOverview}.
 \section{Tail Call} % TODO
 
 Like the previous two proposals mechanized in this project, the Tail Call
-proposal also does not introduce any completely new behavior.
+proposal also does not introduce any completely new behavior at a high level.
 Core WebAssembly explicitly disallows tail-call optimizations for
-functions that return the result of a function call.
+functions that return the result of a function call. % FIXME: Citation needed
+To alleviate this and allow developers to opt into such optimizations,
+this proposal introduces a ``return'' version of each existing call
+instruction\cite{TailCallOverview}:
+
+\begin{itemize}
+	\item \texttt{return\_call}, based on the behavior of the existing
+		\texttt{call} instruction which calls a function directly
+	\item \texttt{return\_call\_indirect}, based on \texttt{call\_indirect}
+		which calls a function via a reference to memory
+\end{itemize}
+
+These new instructions are defined to ``unwind the stack'' in the same way
+a call to the normal \texttt{return} instruction does: by clearing the current
+execution frame and removing it, along with its local values, from the stack.
+Because the arguments to the called function are also a part of that frame,
+the new instructions first must remove those argument values, and replace
+them after popping the stack frame and before invoking the new
+function---behavior not possible using the existing instructions alone.
+
+Semantically, the new instructions actually do very little themselves:
+\texttt{return\_call} is defined almost identically to \texttt{call},
+and \texttt{return\_call\_indirect} to \texttt{call\_indirect}.
+The substantial addition is the \texttt{return\_invoke} tail-invocation
+administrative instruction.
+As an administrative instruction it cannot be used directly by the programmer,
+\texttt{return\_invoke} defines the execution semantics of the additional behavior.
+First, it validates that the function to be called exists, and that there are
+enough values on top of the stack to be used as its defined number of arguments.
+It then removes these arguments, ensures that there is a frame on the stack,
+and removes elements from the stack until the frame is cleared and popped itself.
+Finally, the arguments are returned to the stack, and the existing \texttt{invoke}
+administrative instruction is called to perform the execution of the new function.
 
 % FIXME: Should I say "I"?
 While performing the modeling for the proposal's mechanization, I encountered a
 mistake in the proposed specification.
-Before unwinding the stack when performing the return portion of the operation,
-the values which are to be passed to the function being tail-invoked must first
-be removed and then replaced after the frame of the ending function body is removed.
-Before popping these values off the stack, it must be asserted that these values exist
-in the correct number ($n$).
-Initially, the specification mistakenly required that the stack must contain values
-in number of the tail-invoked function's returned type instead of its input type,
-but correctly removed $n$ values.
-Thus, as initially written, the operation performed the correct operation, but did not check
-that it was possible beforehand, resulting in unsafe operation.
+Initially, after checking that the function exists and determining its type and
+number of arguments and return values, the specification mistakenly required
+that the stack contain at least as many values as the function is declared to return,
+instead of ensuring that there were enough values to use as arguments to the function.
+The subsequent behavior was defined correctly, as the number of arguments were
+removed, but the check would not ensure they existed beforehand.
+Thus, as initially written, the behavior was both overly restrictive (valid
+\texttt{return\_invoke} calls could fail if the function returned more values
+than existed on the stack) and unsafe (functions with more arguments than
+return values could result in non-values being passed as arguments).
 This mistake was brought to the attention of the maintainers and was fixed
 shortly thereafter\cite{TailInvokeIssue10}.
 
