@@ -1,5 +1,6 @@
 \documentclass[12pt]{report}
 \usepackage{uwmthesis}
+\usepackage{cite}
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{stmaryrd}
 \usepackage[T1]{fontenc}
@@ -81,22 +82,19 @@ on June 17, 2015\cite{HistoryWasmTalk}.
 
 WebAssembly (Wasm) is a ``safe, portable, low-level code format designed for
 efficient execution and compact representation''\cite[p. 1]{WasmSpec}.
-WebAssembly defines a virtual instruction set that encapsulates programs
-with it as their target, making them independent of the underlying platform
-on which the program runs.
-WebAssembly programs are executed by \textit{embedding environments}, which provide
-an abstraction layer between the program and the underlying system. % FIXME: pluralization?
-
+The language is defined as a virtual instruction set, encapsulating the
+semantics of the program in a format that is independent of the underlying
+system on which the program runs.
 WebAssembly supports two official formats: a readable text format and a
-more efficient binary format.
+more efficient binary format\cite{WasmSpec}.
+Both formats are based directly from the language's abstract syntax.
+The binary format is a space-efficient mapping of syntax expressions
+into a sequence of raw bytes, with each distinct sequence of bytes
+representing exactly one possible combination of syntax elements
+when decoded.
+The text format is largely similar to the grammar of the language's abstract
+syntax formatted into symbolic expressions (S-expressions).
 
-% TODO: Define embedders, VMs
-
-In order to interact with the environment, WebAssembly embeddings
-expose functionality via application programming interfaces (APIs):
-defined functions that WebAssembly can use to interact with the environment.
-With the Web as the primary embedding environment, Web embeddings provide
-a defined JavaScript API that allows interaction between web pages.
 
 WebAssembly provides safety guarantees by fully encapsulating logic and execution
 at a low level.
@@ -118,6 +116,17 @@ computations the module performs that requires memory utilizes this list
 of bytes, no direct access of the underlying system's physical or virtual memory
 is permitted.
 
+WebAssembly programs are executed by virtual machines,  which provide an
+abstraction layer between the program and the underlying system.
+These virtual machines are typically embedded within a host environment.
+The connection between the host environment (embedding environment) and the virtual
+machine executing the WebAssembly program is called an \textit{embedder}.
+In order to interact with the host environment, WebAssembly embedders
+may expose functionality via application programming interfaces (APIs): defined
+functions that WebAssembly can use to interact with the environment. With the
+Web as the primary embedding environment, Web embeddings provide a defined
+JavaScript API that allows interaction between web pages.
+
 Embedding environments are free to expose any level of functionality to WebAssembly.
 This is enabled by the concept of \textit{host functions}, functions provided by
 the environment that can be invoked by WebAssembly code.
@@ -135,6 +144,29 @@ must be well-typed.
 Examples of host functions include functions for reading and writing system files or
 performing network operations in a non-Web environment.
 
+\section{Non-Web Embeddings}
+
+As its name implies, its primary focus is Web-based software; however it is not
+specific or tied to the Web.
+Other non-Web environments execute WebAssembly for a variety of reasons: its
+safe memory model, its high performance, and it being a universal, encapsulated,
+and independent compile target.
+The last is particularly interesting given its bidirectional implications: a
+programmer can truly write and compile a piece of software once and run it
+nearly anywhere; and a programmer can depend on other software written in any
+language that supports WebAssembly.
+
+WASI (WebAssembly System Interface) is a project that defines a family of APIs
+for WebAssembly to interact with a traditional system environment to perform
+common, core tasks such as interaction with the filesystem and networking\cite{WasiOverview}.
+These APIs are designed to be a common target for embedders to support, allowing optimal
+portability of systems-focused WebAssembly programs while maintaining the security and
+sandboxing of the WebAssembly platform\cite{StandardizingWasi}.
+
+WASI's
+\href{https://github.com/WebAssembly/WASI/blob/master/phases/snapshot/docs.md#-fd_readdirfd-fd-buf-pointeru8-buf_len-size-cookie-dircookie---errno-size}{\texttt{fd\_readdir}},
+for example, is a host function that allows WebAssembly code to read the contents of a directory
+on the environment's filesystem.
 
 \section{Past experiments}
 
@@ -165,6 +197,9 @@ Web---not a first class way of writing software.
 While WebAssembly does require its own execution environment
 similarly to Flash and Java Applets, on the Web this environment is intertwined
 heavily with existing JavaScript engines.
+The three most popular web browsers, Apple's Safari, Google's Chrome, and
+Mozilla's Firefox, each execute WebAssembly using their previously-existing
+JavaScript engines\cite{WebkitAssemblingWebAssembly,V8,SpiderMonkeyDevBlog}.
 
 Finally, as previously mentioned, WebAssembly was designed with a major goal of
 high performance.
@@ -177,32 +212,6 @@ the advancement of more powerful open and standardized Web platform
 features, resulted in Flash falling out of favor\cite{FlashKilledOff}.
 Flash was deprecated in 2017 by Adobe, with an end-of-life date of
 December 2020\cite{FlashFuture}.
-
-% TODO: Describe memory model
-
-\section{Non-Web Embeddings}
-
-As its name implies, its primary focus is Web-based software; however it is not
-specific or tied to the Web.
-Other non-Web environments execute WebAssembly for a variety of reasons: its
-safe memory model, its high performance, and it being a universal, encapsulated,
-and independent compile target.
-The last is particularly interesting given its bidirectional implications: a
-programmer can truly write and compile a piece of software once and run it
-nearly anywhere; and a programmer can depend on other software written in any
-language that supports WebAssembly.
-
-WASI (WebAssembly System Interface) is a project that defines a family of APIs
-for WebAssembly to interact with a traditional system environment to perform
-common, core tasks such as interaction with the filesystem and networking\cite{WasiOverview}.
-These APIs are designed to be a common target for embedders to support, allowing optimal
-portability of systems-focused WebAssembly programs while maintaining the security and
-sandboxing of the WebAssembly platform\cite{StandardizingWasi}.
-
-WASI's
-\href{https://github.com/WebAssembly/WASI/blob/master/phases/snapshot/docs.md#-fd_readdirfd-fd-buf-pointeru8-buf_len-size-cookie-dircookie---errno-size}{\texttt{fd\_readdir}},
-for example, is a host function that allows WebAssembly code to read the contents of a directory
-on the environment's filesystem.
 
 \section{Evolving WebAssembly}
 
