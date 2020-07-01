@@ -65,7 +65,7 @@ called asm.js,
 which are heavily optimized by JavaScript interpreters and just-in-time compilers,
 as well as the underlying hardware\cite{AsmJsResig}.
 
-While this clever usage of the existing platform provided performance imrovements, JavaScript was
+While this clever usage of the existing platform provided performance improvements, JavaScript was
 not designed as a low-level, performant compile target, and the resulting benefits of asm.js
 relied heavily on JavaScript runtime implementations.
 An attempt to define a formal specification and standardize the platform began
@@ -95,7 +95,6 @@ when decoded.
 The text format is largely similar to the grammar of the language's abstract
 syntax formatted into symbolic expressions (S-expressions).
 
-
 WebAssembly provides safety guarantees by fully encapsulating logic and execution
 at a low level.
 Values consist of only 32- and 64-bit variants of integers and IEEE 754
@@ -106,7 +105,7 @@ stack of values and pushing the operation's result onto the stack afterward.
 Strictly speaking this is not completely true, as the language's inclusion of
 local variables allows circumvention of completely stack-based
 execution\cite{WasmNotStackMachine}.
-This has led to challenges for implementors of Lightbeam, an optimizing streaming
+This has led to challenges for implementers of Lightbeam, an optimizing streaming
 WebAssembly compiler\cite{IntroducingLightbeam}.
 
 Memory operations are fully sandboxed by the WebAssembly execution environment.
@@ -182,10 +181,29 @@ the use of plugins.
 They were not \textit{part} of the standardized Web, they were instead isolated
 boxes that ran inside of web pages once a user installed a separate piece of software
 into their browsers that allowed them to work.
+One could attempt making the same statement about WebAssembly, it is by design executed
+in an environment separate from the webpage; though this is not as much of an issue.
+WebAssembly is developed in the open as a web standard, the direction of the
+project is not at the sole discretion of any one organization.
 
-Secondly, because they were executed by their corresponding plugins,
-such applications were unable to interact with the Web's Document Object Model.
-They could not manipulate elements on the page or respond to events.
+While both Flash and Java Applets provided ways to interact with JavaScript and
+the webpage, the primary way for a user to interact with both were via the plugins'
+embedded object within the page, resulting in a poor user experience.
+WebAssembly, by contrast, does \textit{not} have its own way of interacting with
+the user.
+While WebAssembly does require its own execution environment
+similarly to Flash and Java Applets, on the Web this environment is intertwined
+heavily with existing JavaScript engines.
+The three most popular web browsers, Apple's Safari, Google's Chrome, and
+Mozilla's Firefox, each execute WebAssembly using their previously-existing
+JavaScript engines\cite{WebkitAssemblingWebAssembly,V8,SpiderMonkeyDevBlog}.
+All interactions require utilizing the web embedding's host functions,
+defined by the WebAssembly JavaScript Interface\cite{JSInterface} and
+Web-specific extensions provided by the Web API\cite{WebAPI}.
+While this may result in more work on the part of programmers, one must
+perform all input and output by going through JavaScript, it results
+in a fully integrated experience by the user: something that is \textit{part}
+of the Web, not something that is simply stuck inside the webpage.
 
 While WebAssembly is a language in itself that one could write directly,
 it was designed from the beginning to be a standard compile target.
@@ -194,15 +212,8 @@ the Java Virtual Machine and thus run in Java Applets, doing so is
 analogous to compiling other languages to JavaScript so they can be executed on the
 Web---not a first class way of writing software.
 
-While WebAssembly does require its own execution environment
-similarly to Flash and Java Applets, on the Web this environment is intertwined
-heavily with existing JavaScript engines.
-The three most popular web browsers, Apple's Safari, Google's Chrome, and
-Mozilla's Firefox, each execute WebAssembly using their previously-existing
-JavaScript engines\cite{WebkitAssemblingWebAssembly,V8,SpiderMonkeyDevBlog}.
-
-Finally, as previously mentioned, WebAssembly was designed with a major goal of
-high performance.
+Finally, as previously mentioned, WebAssembly was designed with major goals of
+high performance and security.
 
 Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of
 the above reasons for his refusal to provide support for Flash on iPhone
@@ -514,6 +525,9 @@ the container's type, to an \texttt{i64} type containing a signed 64-bit integer
 This is indeed a distinct operation, and was hence added to the proposal
 afterward\cite{SignExtensionOpsOverview}.
 
+Of the three proposals added, Sign Extension Operators was the most
+straightforward to mechanize.
+
 \section{Tail Call} % TODO
 
 Like the previous two proposals mechanized in this project, the Tail Call
@@ -552,6 +566,18 @@ It then removes these arguments, ensures that there is a frame on the stack,
 and removes elements from the stack until the frame is cleared and popped itself.
 Finally, the arguments are returned to the stack, and the existing \texttt{invoke}
 administrative instruction is called to perform the execution of the new function.
+
+While the behavior provided by Tail Call is not entirely new on a high level,
+the new operations interact with the environment in a nontrivial way by unwinding
+the stack.
+Of the three proposals, Tail Call was by far the most complicated to mechanize.
+Modeling it is relatively straightforward; the typing and execution semantics of
+the instructions are well-defined by the specification.
+However, because of their control-flow nature, many properties had to be shown
+to still hold after the addition of the tail-invoke administrative instruction.
+Thankfully, \texttt{return\_invoke}'s stack manipulation is similar enough to
+\texttt{return} and \texttt{break} that the latter two provided great starting
+points for the additions.
 
 % FIXME: Should I say "I"?
 While performing the modeling for the proposal's mechanization, I encountered a
