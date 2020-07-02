@@ -454,17 +454,24 @@ maximum target integer value in case of underflow or overflow, and 0 in the
 event that the source floating point number is \texttt{NaN}, resulting in
 operations that never fail.
 
+At a high level, \texttt{convert\_sat} behaves identically to the existing
+\texttt{convert}, it simply fails in fewer cases.
+As a result, the required additions were straightforward to model
+based on the existing definition, often requiring only receiving a new
+\texttt{ConvertSat} conversion operation as an argument instead of one of the
+existing \texttt{Convert} type.
 In the original mechanization, all numeric conversion instructions are
-handled in a single \texttt{convert} function, which performs the appropriate
-operations for the given instruction.
+handled in a single \texttt{cvt} function, which defers to the correct
+\texttt{cvt\_}\textit{(value type)} function which inserts the appropriate
+instruction for the given conversion.
 Because the non-saturating truncation instructions can fail, resulting in a trap,
-\texttt{convert} returns an \texttt{Option} value, indicating \texttt{Some} value
+\texttt{cvt} returns an \texttt{Option} value, indicating \texttt{Some} value
 if the conversion succeeded or \texttt{None} otherwise, indicating an impossible
 conversion, or a conversion operation that failed and trapped.
 Because these new instructions do not trap, I initially set out to model the
-\texttt{convert\_sat} collection of operations so that they did not return an
+\texttt{cvt\_sat} collection of operations so that they did not return an
 \texttt{Option} and simply returned a value in all cases.
-This was a mistake, as \texttt{convert} returns \texttt{None} not only
+This was a mistake, as \texttt{cvt} returns \texttt{None} not only
 when the conversion failed, but also when no such instruction exists
 to perform the conversion for the given types, such as a hypothetical
 conversion from an \texttt{f64} to an \texttt{f64}.
@@ -474,12 +481,17 @@ when the operation was impossible, such as converting to the same type as
 the original input type.
 After struggling to modify the surrounding proofs to handle such impossible
 conversions elsewhere, I decided on a different course and reverted
-\texttt{convert\_sat} to return an \texttt{Option} like the non-saturating
+\texttt{cvt\_sat} to return an \texttt{Option} like the non-saturating
 version, but which always returns \texttt{Some} value when performing a
 truncation.
 This resulted in a straightforward addition of less resistance, which
 maintains language's proof of soundness without requiring drastic changes to
 the existing theorems and lemmas.
+During the mechanization of this proposal, 172 lines were added and 176 modified.
+Due to the way in which Isabelle enumerates automatically-generated cases and rules
+when performing proofs, many of the modifications were straightforward adjustments
+of numeric indeces: changing rule 14 to rule 15 to account for the newly added
+rule 12, for example.
 
 \section{Sign Extension Operators} % TODO
 
@@ -527,6 +539,41 @@ afterward\cite{SignExtensionOpsOverview}.
 
 Of the three proposals added, Sign Extension Operators was the most
 straightforward to mechanize.
+Each of the new instructions were added, along with a new \texttt{extendsop}
+typing rule and \texttt{extendsop\_i32} and \texttt{extendsop\_i64} reduction
+rules.
+Each of the new rules receives an \texttt{ExtendS} argument,
+which is a new basic instruction variant representing one of
+8, 16, or 32-bit sign extension operation.
+Because \texttt{extend32\_s} is only valid for 64-bit integers,
+the \texttt{i64} type had to be extended from its original \texttt{wasm\_int}
+defined type to a newly-created \texttt{wasm\_int64} type which contains
+the \texttt{extend32\_s} instruction.
+After adding the new instructions and rules, a new \texttt{extendsop}
+application defintion was created for each integer type.
+Finally, with the additions in place, all that remained was to account
+for the new possible instruction types in several existing lemmas
+and theorems, and to update the interpreter and checker modules.
+The intrepreter additionally required one new lemma stating
+that a sign-extension operation always either succeeds or results
+in an error if the types are invalid, which Isabelle was able to prove
+trivially by case analysis.
+Overall, 104 lines were added and 223 modified during the mechanization of this
+proposal, many of the modifications being minor numeric index adjustments
+accounting for the new rules.
+
+\begin{lstlisting}
+datatype
+  extendsop = Extend8S | Extend16S | Extend32S
+
+datatype \<comment> \<open>basic instructions\<close>
+  b_e =
+    Unreachable
+    | Nop
+	...
+    | ExtendS t extendsop
+	...
+\end{lstlisting}
 
 \section{Tail Call} % TODO
 
