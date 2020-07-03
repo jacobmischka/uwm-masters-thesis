@@ -550,11 +550,11 @@ the \texttt{i64} type had to be extended from its original \texttt{wasm\_int}
 defined type to a newly-created \texttt{wasm\_int64} type which contains
 the \texttt{extend32\_s} instruction.
 After adding the new instructions and rules, a new \texttt{extendsop}
-application defintion was created for each integer type.
+application definition was created for each integer type.
 Finally, with the additions in place, all that remained was to account
 for the new possible instruction types in several existing lemmas
 and theorems, and to update the interpreter and checker modules.
-The intrepreter additionally required one new lemma stating
+The interpreter additionally required one new lemma stating
 that a sign-extension operation always either succeeds or results
 in an error if the types are invalid, which Isabelle was able to prove
 trivially by case analysis.
