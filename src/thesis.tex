@@ -352,6 +352,38 @@ there are discussions of unifying them\cite{SubgroupsProcessIssue}.
 
 \chapter{Proof Mechanization} % TODO
 
+Formal handwritten proofs continue to be the standard for showing a given
+system holds certain properties, but they suffer from several drawbacks.
+They can be difficult to both read and write, because often they require
+maintaining a great deal of state of the problem space within one's head
+at a given time in order to reason about the problem at hand.
+Additionally, making adjustments to logical assertions or intermediate
+lemmas is challenging, as even a minor adjustment in one section of the proof
+may cause related statements to no longer hold.
+Finally, they can leave small hidden gaps of missing logic that are easily
+glossed over by reviewers, such as when something seems so \textit{obviously}
+the case that no one bothers to question it, or when ambiguously phrased
+assertions result in potential logical errors.
+
+Proof assistants aim to address these goals, by providing a framework in
+which logical proofs can be encoded in a structured form and verified
+automatically by the proof assistant software.
+This encoding of a natural language proof to such a verifiable format is
+called \textit{mechanization}.
+Ideally, these mechanizations are also human-readable, and provide a high level of
+``eyeball closeness'' to any natural language proofs and other source materials
+such as language specifications\cite{JSCert}.
+
+Proof assistants can be used to model a variety of logical or mathematical
+systems, though have received much attention for proving properties about
+programming languages in particular; % TODO: citation needed
+the (hopefully strict and well-defined) specifications of such languages lend
+themselves well to translation into mechanized forms.
+
+Many such proof assistants exist, including Coq\cite{AboutCoq},
+Isabelle/HOL\cite{IsabelleOverview}, and SASyLF\cite{SASyLF}.
+
+
 \chapter{Soundness}
 
 Typically, a programming language's type system is considered \textit{safe} or
@@ -454,8 +486,9 @@ maximum target integer value in case of underflow or overflow, and 0 in the
 event that the source floating point number is \texttt{NaN}, resulting in
 operations that never fail.
 
-At a high level, \texttt{convert\_sat} behaves identically to the existing
-\texttt{convert}, it simply fails in fewer cases.
+At a high level, the new \texttt{cvt\_sat} saturating conversion function
+behaves identically to the existing \texttt{cvt}, it simply fails in fewer
+cases.
 As a result, the required additions were straightforward to model
 based on the existing definition, often requiring only receiving a new
 \texttt{ConvertSat} conversion operation as an argument instead of one of the
@@ -490,7 +523,7 @@ the existing theorems and lemmas.
 During the mechanization of this proposal, 172 lines were added and 176 modified.
 Due to the way in which Isabelle enumerates automatically-generated cases and rules
 when performing proofs, many of the modifications were straightforward adjustments
-of numeric indeces: changing rule 14 to rule 15 to account for the newly added
+of numeric indices: changing rule 14 to rule 15 to account for the newly added
 rule 12, for example.
 
 \section{Sign Extension Operators} % TODO
@@ -626,7 +659,6 @@ Thankfully, \texttt{return\_invoke}'s stack manipulation is similar enough to
 \texttt{return} and \texttt{break} that the latter two provided great starting
 points for the additions.
 
-% FIXME: Should I say "I"?
 While performing the modeling for the proposal's mechanization, I encountered a
 mistake in the proposed specification.
 Initially, after checking that the function exists and determining its type and
@@ -644,9 +676,12 @@ shortly thereafter\cite{TailInvokeIssue10}.
 
 While the oversight was relatively minor in terms of size, only a single letter's
 difference, finding otherwise easily-overlooked mistakes is one of the primary
-strengths of mechanization in proofs.
+strengths of mechanization in proofs, as mentioned earlier in this document.
 Whereas the human eye can easily disregard a small typo or gloss over that
 seems obvious, proof assistants insist that everything be proved without a doubt.
+While this typo may have been caught by a reviewer before being fully adopted
+into the official language specification, the statement existed in its incorrect
+state for over two years, since its initial authoring\cite{TailInvokeTypoHistory}.
 
 \chapter{Conclusions} % TODO
 
