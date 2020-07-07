@@ -126,6 +126,24 @@ functions that WebAssembly can use to interact with the environment. With the
 Web as the primary embedding environment, Web embeddings provide a defined
 JavaScript API that allows interaction between web pages.
 
+Instructions are grouped into several categories: numeric instructions which perform
+various mathematical operations on specific numeric value types, parametric
+instructions which can operate on any value type, variable instructions for manipulating
+local or global variables, memory instructions for manipulating the linear memory,
+and control instructions for manipulating the program's control flow.
+Notably for a lower level language, WebAssembly's control flow is fully structured:
+there is no rudimentary \texttt{goto}-like construct, the flow of the program is
+manipulated only by structured instructions such as blocks and loops, if
+statements, and branch instructions.
+In addition to the above \textit{basic instructions} that are available to
+programmers, the specification also defines several \textit{administrative
+instructions} which are used to express the reduction of various basic instructions.
+Administrative instructions cannot be called directly, but are internally used by
+the virtual machine to represent resulting intermediate states.
+As examples, the \texttt{trap} instruction represents the reduction of an
+erroneous state, and the \texttt{invoke} instruction represents the invocation
+of a function instance by its address in memory.
+
 Embedding environments are free to expose any level of functionality to WebAssembly.
 This is enabled by the concept of \textit{host functions}, functions provided by
 the environment that can be invoked by WebAssembly code.
@@ -457,21 +475,11 @@ phase\cite{WasmProposals}.
 
 \section{Non-trapping Float-to-Int Conversions} % TODO
 
-The first of the three mechanized, this proposal introduces 8 new
-floating point truncation instructions of the form \\
-\textit{(destination type)}\texttt{.trunc\_sat\_}\textit{(source type)}\texttt{\_}\textit{(signedness)}%
-\cite{NontrappingFloatToIntOverview}:
-
-\begin{itemize}
-	\item \texttt{i32.trunc\_sat\_f32\_s}
-	\item \texttt{i32.trunc\_sat\_f32\_u}
-	\item \texttt{i32.trunc\_sat\_f64\_s}
-	\item \texttt{i32.trunc\_sat\_f64\_u}
-	\item \texttt{i64.trunc\_sat\_f32\_s}
-	\item \texttt{i64.trunc\_sat\_f32\_u}
-	\item \texttt{i64.trunc\_sat\_f64\_s}
-	\item \texttt{i64.trunc\_sat\_f64\_u}
-\end{itemize}
+The first of the three mechanized, this proposal introduces 8 new floating
+point truncation instructions of the form
+\texttt{i\{32,64\}.trunc\_sat\_f\{32,64\}\_\{u,s\}}, permutation groups
+representing destination type, source type, and signedness,
+respectively\cite{NontrappingFloatToIntOverview}.
 
 These new instructions are \textit{saturating}, meaning that their results are
 limited to the maximum or minimum possible value for the given destination type.
@@ -533,11 +541,11 @@ introduces several new numeric conversion operations which are similar to
 existing instructions\cite{SignExtensionOpsOverview}:
 
 \begin{itemize}
-	\item \texttt{i32.extend8\_s}: extend a signed 8-bit integer to a 32-bit integer
-	\item \texttt{i32.extend16\_s}: extend a signed 16-bit integer to a 32-bit integer
-	\item \texttt{i64.extend8\_s}: extend a signed 8-bit integer to a 64-bit integer
-	\item \texttt{i64.extend16\_s}: extend a signed 16-bit integer to a 64-bit integer
-	\item \texttt{i64.extend32\_s}: extend a signed 32-bit integer to a 64-bit integer
+	\item \texttt{i32.extend8\_s}: sign extend the lower 8 bits of a 32-bit integer to the full integer width
+	\item \texttt{i32.extend16\_s}: likewise, but the lower 16 bits
+	\item \texttt{i64.extend8\_s}: sign extend the lower 8 bits of a 64-bit integer to the full integer width
+	\item \texttt{i64.extend16\_s}: likewise, but the lower 16 bits
+	\item \texttt{i64.extend32\_s}: likewise, but the lower 32 bits
 \end{itemize}
 
 Already present in the MVP release of WebAssembly are \texttt{i64.extend\_s}
@@ -551,7 +559,7 @@ value, instead only its contents: \texttt{i32.extend8\_s} receives an
 These new instructions reinterpret the contents of a value, operating
 on smaller signed integer values packed inside the bits of one of
 WebAssembly's integer types.
-%                     ↓ Impossible?
+% FIXME                ↓ Impossible?
 While such cases are unlikely when using pure WebAssembly,
 interaction with other environments or languages may result in
 such values existing.
@@ -594,19 +602,6 @@ trivially by case analysis.
 Overall, 104 lines were added and 223 modified during the mechanization of this
 proposal, many of the modifications being minor numeric index adjustments
 accounting for the new rules.
-
-\begin{lstlisting}
-datatype
-  extendsop = Extend8S | Extend16S | Extend32S
-
-datatype \<comment> \<open>basic instructions\<close>
-  b_e =
-    Unreachable
-    | Nop
-	...
-    | ExtendS t extendsop
-	...
-\end{lstlisting}
 
 \section{Tail Call} % TODO
 
@@ -686,6 +681,12 @@ state for over two years, since its initial authoring\cite{TailInvokeTypoHistory
 \chapter{Conclusions} % TODO
 
 \chapter{Related Work} % TODO
+
+\paragraph{Security}
+
+Despite WebAssembly's design goal of security, vulnerabilities have been found
+primarily due to its simple linear memory model and the ability to escape the
+virtual machine sandbox using embedder host functions\cite{LehmannEverything}.
 
 \chapter{Future Work} % TODO
 
