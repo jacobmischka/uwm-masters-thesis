@@ -776,7 +776,39 @@ authoring\cite{TailInvokeTypoHistory}.
 
 \chapter{Future Work} % TODO
 
+Certainly, much remains to be done in the area of WebAssembly soundness
+validation.
+With the three proposals included in this work, as of the time of this writing
+no other proposals which affect the language specification and its soundness
+have been fully adopted into the language, however many proposals remain
+outstanding.
+In order to maximize the effectiveness of proof mechanization, such attempts
+should be performed before they are adopted in order to confirm that they
+do not adversely affect the soundness of the language's type system;
+though attempts to mechanize a proposal which is changing rapidly poses
+challenges in itself.
+Five proposals in phase 3 or greater are currently outstanding without
+a mechanized proof.
+Of particular importance are proposals with larger scope that affect
+core behavior of the system and its typing rules, such as the phase 4
+Reference Types Proposal\cite{ReferenceTypesProposalOverview,WeakeningWasm}
+and phase 2 Threading Proposal\cite{ThreadingProposalOverview,WeakeningWasm}.
+
+While no requirement exists currently, it may be useful to require proof
+that the type system is not adversely affected before a proposal can be
+finalized and adopted.
+Advocation for such a requirement and its enforcement is another area with
+potential.
+
 \chapter{Conclusion} % TODO
+
+This paper investigates the WebAssembly language and the soundness of its
+type system.
+Beginning with an existing mechanized proof of the core language using the
+Isabelle proof assistant, my project extends the mechanization to include three
+additions to the language, two of which have since been included into a new
+release of the official WebAssembly language specification, with the third
+remaining a proposed addition still under review and finalization.
 
 % One paragraph summarizing what I did
 % Another paragraph summarizing what I learned
