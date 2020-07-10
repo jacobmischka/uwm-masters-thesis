@@ -417,11 +417,24 @@ themselves well to translation into mechanized forms.
 Many such proof assistants exist, including Coq\cite{AboutCoq},
 Isabelle\cite{IsabelleOverview}, Lean\cite{LeanProver}, and
 SASyLF\cite{SASyLF}.
-% TODO
-
-In addition to verifying proofs, many proof assistants also provide
-the use of proof tactics.
-% TODO
+In addition to the fundamental purpose of proof verification, many such tools
+assist proof writers by providing automated proof \textit{tactics} or
+\textit{methods} which attempt to fully automate the proof for a given
+assertion.
+While this can greatly reduce the tedium of both writing and reading proofs
+that apply logical steps individually, it also can result in confusion
+when such proof methods do not behave as expected.
+In writing, debugging such cases can be challenging due to nonexistent failure
+messages, and even cases of simply forgetting a rule when providing the proof
+method with the list of rules to apply are often unclear.
+When reading, automatically-proved assertions provide little context,
+requiring the reader to simply trust the method's claim about the assertion.
+In order to understand the details of the claim, one must deconstruct it
+either mentally when reading or by reducing it to smaller logical steps
+when debugging.
+As a result, such automation is useful, but its overuse can result in terse
+mechanizations that are difficult to understand when reading or performing
+modifications.
 
 \chapter{Soundness}
 
@@ -495,8 +508,8 @@ with another proof assistant SASyLF and reading the official Isabelle tutorials
 and reference manuals.
 The SASyLF proof assistant is designed to be explicit: one must specify exactly
 which logical rules and assumptions are being applied each step along the way.
-Additionally, it is designed to be relatively simple to use, with few advanced
-features and logical constructs.
+Additionally, it is designed to be relatively simple to use, with relatively
+few advanced features and logical constructs.
 By contrast, Isabelle both embraces implicitness and equips users with
 many advanced features and slightly nuanced ways to perform similar tasks.
 
@@ -516,16 +529,6 @@ rules can be defined using the Isabelle/Pure syntax.
 As a result, in order to become productive with Isabelle one must
 learn many different sublanguages; particularly so when diving into
 a large proof that makes extensive use of more advanced features of each.
-
-Isabelle allows users to leverage several different \textit{provers} and
-tactics which can perform the legwork of applying individual steps of logic in
-order to arrive at a given assertion.
-While this can greatly reduce the tedium of both writing and reading proofs
-that apply logical steps individually, it also can result in confusion
-when such proof methods do not behave as expected.
-Debugging such cases is challenging due to nonexistent failure messages, and
-even cases of simply forgetting a rule when providing the proof method with the
-list of rules to apply are often unclear.
 
 Isabelle provides implicit definitions for a great deal of constructs, such as
 application rules for defined functions and possible outcomes of an analysis
