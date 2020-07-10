@@ -438,8 +438,14 @@ modifications.
 
 \chapter{Soundness}
 
-Typically, a programming language's type system is considered \textit{safe} or
-\textit{sound} when it exhibits the following two primary properties\cite{pfpl2}:
+A programming language with a \textit{sound} or \textit{safe} type system
+provides certain guarantees that operations are only performed on values
+of the appropriate type. For example, it prevents one from mistakenly
+adding a number to a string of textual characters, or from attempting
+to access a nonexistent property of a record or object.
+
+Typically, a programming language's type system is considered sound when it
+exhibits the following two primary properties\cite{pfpl2}:
 
 \begin{enumerate}
 	\item \textit{Preservation}: If an expression is well-typed and performs
@@ -449,7 +455,37 @@ Typically, a programming language's type system is considered \textit{safe} or
 		has been reduced to a value, or it can be further evaluated.
 \end{enumerate}
 
-% TODO: Talk about what Soundness actually means / what it gets you
+It is important to note that just because a language is considered sound
+does not mean that every program written for it is entirely safe in all
+contexts.
+Firstly, the soundness of a language's specification provides no guarantee
+of the soundness of a particular \textit{implementation} of the language;
+a mistake in a particular WebAssembly virtual machine may still result
+in undefined behavior.
+Secondly, while a type-safe programming language prevents programmers from
+making mistakes regarding to unexpected or unconsidered possibilities
+regarding values and their types, it by no means ensures that all
+code is bug-free.
+As an example, consider an \texttt{add} function that accepts two numbers and
+returns one number.
+While strong typing and type safety ensures that it will only be operating
+on numbers as intended, it does not ensure that the function will properly
+perform the addition; \texttt{add} may in fact subtract the numbers instead,
+still returning a number as declared but not the value expected by the caller.
+
+Finally, the safety of a language's type system makes no guarantees about the
+safety and security of the language itself.
+As an illustration of this, despite WebAssembly's type-safety and its design
+goal of security, vulnerabilities have been found primarily due to its simple
+linear memory model and the ability to escape the virtual machine sandbox using
+embedder host functions\cite{LehmannEverything}.
+However, one issue brought up by the authors could have been prevented by
+a differently designed sound type system: that memory addresses are simply
+primitive 32-bit integers.
+If instead memory addresses had a dedicated type to themselves, functions
+designed to operate on integers and functions designed to accept memory
+address pointers would be incompatible, preventing certain remote code
+execution attacks\cite[p. 10]{LehmannEverything}.
 
 Core WebAssembly's type system is proved to be sound via a natural language
 proof included in the specification\cite[p. 140]{WasmSpec}.
@@ -470,11 +506,6 @@ Additionally, the declared requirements of host functions, functions provided
 by the embedding environment that can be called by WebAssembly code, were
 discovered to be too weak to maintain type safety and rewritten as a
 result\cite[p. 61]{WattMechanizing}.
-
-Despite WebAssembly's design goal of security, vulnerabilities have been found
-primarily due to its simple linear memory model and the ability to escape the
-virtual machine sandbox using embedder host functions\cite{LehmannEverything}.
-% TODO: Elaborate on this
 
 In addition to proving soundness of the core language via progress and
 preservation, the original mechanization included several notable
@@ -645,7 +676,6 @@ value, instead only its contents: \texttt{i32.extend8\_s} receives an
 These new instructions reinterpret the contents of a value, operating
 on smaller signed integer values packed inside the bits of one of
 WebAssembly's integer types.
-% FIXME                ↓ Impossible?
 While such cases are unlikely when using pure WebAssembly,
 interaction with other environments or languages may result in
 such values existing.
@@ -802,6 +832,7 @@ potential.
 
 \chapter{Conclusion} % TODO
 
+% One paragraph summarizing what I did
 This paper investigates the WebAssembly language and the soundness of its
 type system.
 Beginning with an existing mechanized proof of the core language using the
@@ -810,9 +841,7 @@ additions to the language, two of which have since been included into a new
 release of the official WebAssembly language specification, with the third
 remaining a proposed addition still under review and finalization.
 
-% One paragraph summarizing what I did
-% Another paragraph summarizing what I learned
-% - What's the point?
+% TODO: Another paragraph summarizing what I learned (what's the point?)
 
 % \appendix
 
