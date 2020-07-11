@@ -516,9 +516,17 @@ In the original specification, functions and instructions can return at most
 one result. This restriction is removed by the Multi-value Proposal, allowing
 multiple return values for each\cite{MultiValueOverview}.
 Additionally, as well as the soundness proof of the core language, the initial
-mechanization included two separate modules which were also proven sound: an
-executable type checker\cite[p. 61]{WattMechanizing} and an executable
-interpreter\cite[p.62]{WattMechanizing}.
+mechanization included two separate modules which were also proven sound with respect to
+the mechanized specification: an executable type checker\cite[p.
+61]{WattMechanizing} and an executable interpreter\cite[p.62]{WattMechanizing}.
+These additional modules are important because they provide a link between
+the mechanized, verified specification and actual existing code.
+By comparing the results of these modules to their official implementations
+by utilizing the WebAssembly test suite or existing real-world software,
+trust of correctness is established in the mechanization\cite{JSCert}.
+Trust that the mechanization is correct with respect to the specification
+strengthens the claims that the mechanization makes about the soundness of
+the specification itself.
 
 \chapter{Incremental Soundness}
 
