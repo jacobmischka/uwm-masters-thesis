@@ -544,10 +544,9 @@ few advanced features and logical constructs.
 By contrast, Isabelle both embraces implicitness and equips users with
 many advanced features and slightly nuanced ways to perform similar tasks.
 
-An Isabelle proof can consist of several distinct but related types
-of syntax.
-The most common and de facto framework used in modern Isabelle proofs is
-Isabelle/Isar, which is modeled after human-readable logical proofs.
+An Isabelle proof can consist of several distinct but related types of syntax.
+The most common and \textit{de facto} framework used in modern Isabelle proofs
+is Isabelle/Isar, which is modeled after human-readable logical proofs.
 In addition to the structured Isar syntax, logical steps also can be applied
 individually using the older \textit{apply script} syntax.
 The Isar and apply script syntaxes can be interwoven, resulting in a
@@ -773,6 +772,26 @@ to still hold after the addition of the tail-invoke administrative instruction.
 Thankfully, \texttt{return\_invoke}'s stack manipulation is similar enough to
 \texttt{return} and \texttt{break} that the latter two provided great starting
 points for the additions.
+
+Unlike the two previous proposals, updating the interpreter after modeling the
+new instructions was not trivial.
+Because tail-invocation introduces new behavior at the completion of a step of
+evaluation, a new result step type \texttt{RSTailInvoke} had to be introduced.
+The existing returning result step type \texttt{RSReturn} was not sufficient as
+it only contains the list of returned values to the next step of evaluation,
+while \texttt{RSTailInvoke} contains the function to be invoked as well.
+This modeling, while determined independently, mirrors that used in the
+official proposal interpreter\cite{TailCallEvalImpl}.
+With the addition of this new result step type, its occurrence had to be
+handled at the end of a step of evaluation requiring new logic (though similar
+to that of the existing \texttt{RSReturn}) instead of mere updates, and its
+possibility had to be accounted for in various places throughout the
+interpreter and its soundness and completeness assertions.
+
+Owing both to the amount of new behavior introduced, as well as the requirement
+for several helper lemmas to account for new language constructs, the amount of
+added code compared to modified code is significantly higher than with the
+previous two proposals: 1117 lines were added and 132 modified.
 
 While performing the modeling for the proposal's mechanization, I encountered a
 mistake in the proposed specification.
