@@ -209,11 +209,19 @@ browsers through the use of plugins.
 They were not \textit{part} of the standardized Web, they were instead isolated
 boxes that ran inside of web pages once a user installed a separate piece of
 software into their browsers that allowed them to work.
-One could attempt making the same statement about WebAssembly, it is by design
-executed in an environment separate from the webpage; though this is not as
-much of an issue.
-WebAssembly is developed in the open as a web standard, the direction of the
-project is not at the sole discretion of any one organization.
+Because they operated only using browser plugins, they are unsupported on
+popular mobile platforms such as Android and iOS.
+If a given applet requires a newer version of the JRE than is installed on the
+system, or if no JRE installed at all, the user must download and install it.
+The Java 8 Runtime Environment installer currently is between 60 and 80 MB,
+depending on the platform.
+Performing this installation requires administrative privileges, preventing
+users on shared systems from running the applet if they are not able to
+perform the installation.
+WebAssembly, by contrast,  is developed in the open as a web standard, the
+direction of the project is not at the sole discretion of any one organization.
+WebAssembly virtual machines are integrated directly into modern browsers,
+requiring no additional action by the user to enable.
 
 While both Flash and Java Applets provided ways to interact with JavaScript and
 the webpage, the primary way for a user to interact with both were via the
@@ -243,6 +251,8 @@ Web---not a first class way of writing software.
 
 Finally, as previously mentioned, WebAssembly was designed with major goals of
 high performance and security.
+While Java applets could offer high performance, their reliance on the JRE on
+the host system has both performance and security implications.
 % TODO
 
 Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of
