@@ -253,7 +253,16 @@ Finally, as previously mentioned, WebAssembly was designed with major goals of
 high performance and security.
 While Java applets could offer high performance, their reliance on the JRE on
 the host system has both performance and security implications.
-% TODO
+Flash, on the other hand, suffers from poor performance as well as introduces
+a greater security risk.
+% TODO: Reference some performance studies
+In both cases, integrating with another piece of software introduces new
+potential vectors for attackers to exploit---the larger the attack surface
+creates more opportunities for software bugs to result in security
+vulnerabilities.
+% TODO: Link some vulnerabilities
+Security researchers\cite{Pwn2OwnMillerInterview} and the \citeauthor{CISASecuringWebBrowser}\cite{CISASecuringWebBrowser} suggest
+disabling such plugins in order to increase security.
 
 Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of
 the above reasons for his refusal to provide support for Flash on iPhone
