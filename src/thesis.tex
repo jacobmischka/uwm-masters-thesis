@@ -480,8 +480,14 @@ As an example, consider an \texttt{add} function that accepts two numbers and
 returns one number.
 While strong typing and type safety ensures that it will only be operating
 on numbers as intended, it does not ensure that the function will properly
-perform the addition; \texttt{add} may in fact subtract the numbers instead,
-still returning a number as declared but not the value expected by the caller.
+perform the addition---the type system can only prevent errors involving types.
+Any number of other logical or operational errors can still arise:
+the addition operation in \texttt{add} may overflow the maximum value that can
+be expressed in the number type resulting in the incorrect value being
+returned, or complex conditional logic or even a mistyping may result in a
+subtraction being performed instead, for example.
+In all of such cases the types of the values are correct and sound, but the
+values themselves are not.
 
 Finally, the safety of a language's type system makes no guarantees about the
 safety and security of the language itself.
@@ -506,7 +512,7 @@ mechanized proof of the full language specification was developed
 independently, using the Isabelle/HOL proof assistant\cite{WattMechanizing}.
 
 \citeauthor{WattMechanizing}'s mechanization of core WebAssembly took place
-separately from the development of the language, though proved crucial in
+separately from the development of the language, though it proved crucial in
 its foundation by identifying several major errors in the official WebAssembly
 specification.
 These issues were brought to the attention of the Working Group and fixed,
@@ -526,8 +532,8 @@ In the original specification, functions and instructions can return at most
 one result. This restriction is removed by the Multi-value Proposal, allowing
 multiple return values for each\cite{MultiValueOverview}.
 Additionally, as well as the soundness proof of the core language, the initial
-mechanization included two separate modules which were also proven sound with respect to
-the mechanized specification: an executable type checker\cite[p.
+mechanization included two separate modules which were also proven sound with
+respect to the mechanized specification: an executable type checker\cite[p.
 61]{WattMechanizing} and an executable interpreter\cite[p.62]{WattMechanizing}.
 These additional modules are important because they provide a link between
 the mechanized, verified specification and actual existing code.
@@ -581,9 +587,9 @@ a large proof that makes extensive use of more advanced features of each.
 Isabelle provides implicit definitions for a great deal of constructs, such as
 application rules for defined functions and possible outcomes of an analysis
 of possible cases.
-These definitions are named according to a set of documented rules, though
-often include a numeric index when dealing with collections of premises or
-a list of possible outcomes.
+These definitions are named according to documented rules, though they often
+include numeric indices when dealing with collections of premises or a list of
+possible outcomes.
 Occasionally, these indices are the only or most convenient way to refer
 to a premise or rule in order to make use of it, leading to a given
 assertion being shown simply by \texttt{3}, for example.
@@ -629,22 +635,22 @@ maximum target integer value in case of underflow or overflow, and 0 in the
 event that the source floating point number is \texttt{NaN}, resulting in
 operations that never fail.
 
+In the mechanization, numeric conversion is performed using a \texttt{cvt}
+conversion function which determines the correct operations for the types of
+the values passed to it, deferring to the correct \texttt{cvt\_}\textit{(value
+	type)} function which inserts the appropriate instruction for the given
+conversion.
+Because some conversions between types are impossible, and some conversion
+operations can fail resulting in a trap, \texttt{cvt} returns an
+\texttt{Option} value indicating \texttt{Some} value if the conversion
+succeeded or \texttt{None} otherwise, indicating an impossible conversion, or a
+conversion operation that failed and trapped.
 At a high level, the new \texttt{cvt\_sat} saturating conversion function
 behaves identically to the existing \texttt{cvt}, it simply fails in fewer
 cases.
-As a result, the required additions were straightforward to model
-based on the existing definition, often requiring only receiving a new
-\texttt{ConvertSat} conversion operation as an argument instead of one of the
-existing \texttt{Convert} type.
-In the original mechanization, all numeric conversion instructions are
-handled in a single \texttt{cvt} function, which defers to the correct
-\texttt{cvt\_}\textit{(value type)} function which inserts the appropriate
-instruction for the given conversion.
-Because the non-saturating truncation instructions can fail, resulting in a
-trap, \texttt{cvt} returns an \texttt{Option} value, indicating \texttt{Some}
-value if the conversion succeeded or \texttt{None} otherwise, indicating an
-impossible conversion, or a conversion operation that failed and trapped.
-Because these new instructions do not trap, I initially set out to model the
+As a result, the required additions were straightforward to model based on the
+existing definition.
+Because the new instructions do not trap, I initially set out to model the
 \texttt{cvt\_sat} collection of operations so that they did not return an
 \texttt{Option} and simply returned a value in all cases.
 This was a mistake, as \texttt{cvt} returns \texttt{None} not only
