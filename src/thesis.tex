@@ -544,6 +544,21 @@ Trust that the mechanization is correct with respect to the specification
 strengthens the claims that the mechanization makes about the soundness of
 the specification itself.
 
+Unfortunately, the mechanization of the language plays no role currently in
+steering WebAssembly development.
+To my knowledge, no work is being done to extend it, and new language features
+are not required to be mechanized before they are adopted into the standard.
+Aside from human checks by the Working Group, which are fallible as mentioned
+in the previous chapter, no process currently exists to prevent proposals from
+causing errors making the type system no longer sound.
+While no requirement exists currently, it may be useful to require proof
+that the type system is not adversely affected before a proposal can be
+finalized and adopted.
+The Isabelle mechanization, particularly when augmented with the language
+additions included with this work, is the best starting point for such a
+requirement and the adoption of a more rigid process for ensuring the type
+system stays in tact.
+
 \chapter{Incremental Soundness}
 
 My project builds on the existing Isabelle proof, extending the initial
@@ -867,12 +882,6 @@ core behavior of the system and its typing rules, such as the phase 4
 Reference Types Proposal\cite{ReferenceTypesProposalOverview,WeakeningWasm}
 and phase 2 Threading Proposal\cite{ThreadingProposalOverview,WeakeningWasm}.
 
-While no requirement exists currently, it may be useful to require proof
-that the type system is not adversely affected before a proposal can be
-finalized and adopted.
-Advocation for such a requirement and its enforcement is another area with
-potential.
-
 \chapter{Conclusion} % TODO
 
 % One paragraph summarizing what I did
@@ -883,6 +892,9 @@ Isabelle proof assistant, my project extends the mechanization to include three
 additions to the language, two of which have since been included into a new
 release of the official WebAssembly language specification, with the third
 remaining a proposed addition still under review and finalization.
+The mechanization's extensions have been approved by its original author
+\citeauthor{WattMechanizing}, and plans are in place to integrate the changes
+into the official source.
 
 % TODO: Another paragraph summarizing what I learned (what's the point?)
 
