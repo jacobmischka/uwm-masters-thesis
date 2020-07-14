@@ -224,10 +224,13 @@ WebAssembly virtual machines are integrated directly into modern browsers,
 requiring no additional action by the user to enable.
 
 While both Flash and Java Applets provided ways to interact with JavaScript and
-the webpage, the primary way for a user to interact with both were via the
-plugins' embedded object within the page, resulting in a poor user experience.
-WebAssembly, by contrast, does \textit{not} have its own way of interacting with
-the user.
+the web page, the primary way for a user to interact with both were via the
+plugins' embedded objects within the page.
+This disconnect between the web page and the application resulted in a jarring
+disintegrated experience for users, and poor or nonexistent accessibility by
+default for screen readers.
+WebAssembly, by contrast, does \textit{not} have its own way of interacting
+with the user---all input and output is performed using the JavaScript bridge.
 While WebAssembly does require its own execution environment
 similarly to Flash and Java Applets, on the Web this environment is intertwined
 heavily with existing JavaScript engines.
@@ -251,16 +254,13 @@ Web---not a first class way of writing software.
 
 Finally, as previously mentioned, WebAssembly was designed with major goals of
 high performance and security.
-While Java applets could offer high performance, their reliance on the JRE on
-the host system has both performance and security implications.
-Flash, on the other hand, suffers from poor performance as well as introduces
-a greater security risk.
-% TODO: Reference some performance studies
-In both cases, integrating with another piece of software introduces new
-potential vectors for attackers to exploit---the larger the attack surface
-creates more opportunities for software bugs to result in security
-vulnerabilities.
-% TODO: Link some vulnerabilities
+While Java applets and Flash applications can offer high performance in optimal
+circumstances, their reliance on software installed on the host system has
+security implications.
+Integrating with another piece of software introduces new potential vectors for
+attackers to exploit---the larger the attack surface creates more opportunities
+for software bugs to result in security
+vulnerabilities\cite{JRECveDetails,FlashSecurityUpdates}.
 Security researchers\cite{Pwn2OwnMillerInterview} and the \citeauthor{CISASecuringWebBrowser}\cite{CISASecuringWebBrowser} suggest
 disabling such plugins in order to increase security.
 
