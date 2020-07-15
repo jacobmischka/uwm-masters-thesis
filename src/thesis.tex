@@ -87,9 +87,9 @@ efficient execution and compact representation''\cite[p. 1]{WasmSpec}.
 The language is defined as a virtual instruction set, encapsulating the
 semantics of the program in a format that is independent of the underlying
 system on which the program runs.
-WebAssembly supports two official formats: a readable text format and a
-more efficient binary format\cite{WasmSpec}.
-Both formats are based directly from the language's abstract syntax.
+WebAssembly supports two official formats: a readable text format and a more
+efficient binary format\cite{WasmSpec}; both formats are based directly from
+the language's abstract syntax.
 The binary format is a space-efficient mapping of syntax expressions
 into a sequence of raw bytes, with each distinct sequence of bytes
 representing exactly one possible combination of syntax elements
@@ -106,10 +106,9 @@ wherein operations are performed by removing operands from a last-in-first-out
 stack of values and pushing the operation's result onto the stack afterward.
 Strictly speaking this is not completely true, as the language's inclusion of
 local variables allows circumvention of completely stack-based
-execution\cite{WasmNotStackMachine}.
-This has led to challenges for implementers of Lightbeam, an optimizing
-streaming WebAssembly compiler\cite{IntroducingLightbeam}.
-
+execution\cite{WasmNotStackMachine}; this has led to challenges for
+implementers of Lightbeam, an optimizing streaming WebAssembly
+compiler\cite{IntroducingLightbeam}.
 Memory operations are fully sandboxed by the WebAssembly execution environment.
 WebAssembly memories are single lists of raw bytes\cite[p. 16]{WasmSpec}.
 Each WebAssembly module can include a single memory vector, and any
@@ -117,46 +116,26 @@ computations the module performs that requires memory utilizes this list
 of bytes, no direct access of the underlying system's physical or virtual
 memory is permitted.
 
-WebAssembly programs are executed by virtual machines,  which provide an
+WebAssembly programs are executed by virtual machines, which provide an
 abstraction layer between the program and the underlying system.
-These virtual machines are typically embedded within a host environment.
-The connection between the host environment (embedding environment) and the
-virtual machine executing the WebAssembly program is called an
-\textit{embedder}.
+The connection between the host environment which runs the virtual machine
+(embedding environment) and the virtual machine executing the WebAssembly
+program is called an \textit{embedder}.
 In order to interact with the host environment, WebAssembly embedders may
 expose functionality via application programming interfaces (APIs): defined
 functions that WebAssembly can use to interact with the environment.
 With the Web as the primary embedding environment, Web embeddings provide a
 defined JavaScript API that allows interaction between web pages.
 
-Instructions are grouped into several categories: numeric instructions which
-perform various mathematical operations on specific numeric value types,
-parametric instructions which can operate on any value type, variable
-instructions for manipulating local or global variables, memory instructions
-for manipulating the linear memory, and control instructions for manipulating
-the program's control flow.
-Notably for a lower level language, WebAssembly's control flow is fully
-structured: there is no rudimentary \texttt{goto}-like construct, the flow of
-the program is manipulated only by structured instructions such as blocks and
-loops, if statements, and branch instructions.
-In addition to the above \textit{basic instructions} that are available to
-programmers, the specification also defines several \textit{administrative
-	instructions} which are used to express the reduction of various basic
-instructions.
-Administrative instructions cannot be called directly, but are internally used
-by the virtual machine to represent resulting intermediate states.
-As examples, the \texttt{trap} instruction represents the reduction of an
-erroneous state, and the \texttt{invoke} instruction represents the invocation
-of a function instance by its address in memory.
-
 Embedding environments are free to expose any level of functionality to
-WebAssembly. This is enabled by the concept of \textit{host functions},
-functions provided by the environment that can be invoked by WebAssembly code.
+WebAssembly, enabled by the concept of \textit{host functions} provided by the
+environment that can be invoked by WebAssembly.
 Host functions can receive and return values like regular functions, though
-they can also modify the store\cite[p. 78]{WasmSpec}.
+they can also modify the store, the abstract model of the program's global
+state\cite[p. 78]{WasmSpec}.
 WebAssembly itself provides no guarantees about the determinism of host
-functions. As far as WebAssembly is concerned, such functions can be assumed to
-succeed or fail arbitrarily at the whims of the embedding environment.
+functions---as far as WebAssembly is concerned, such functions can be assumed
+to succeed or fail arbitrarily at the whims of the embedding environment.
 If the function call succeeds, a compliant embedding environment is required to
 correctly remove the expected number of arguments from the stack, and return
 the declared number of values.
@@ -166,10 +145,30 @@ and its contents must be well-typed.
 Examples of host functions include functions for reading and writing system
 files or performing network operations in a non-Web environment.
 
+WebAssembly instructions are grouped into several categories: numeric
+instructions which perform various mathematical operations on specific numeric
+value types, parametric instructions which can operate on any value type,
+variable instructions for manipulating local or global variables, memory
+instructions for manipulating the linear memory, and control instructions for
+manipulating the program's control flow.
+Notable for a lower level language, WebAssembly's control flow is fully
+structured: there is no rudimentary \texttt{goto}-like construct, the flow of
+the program is manipulated only by structured instructions such as blocks and
+loops, if statements, and branch instructions.
+In addition to the \textit{basic instructions} that are available to
+programmers, the specification also defines several \textit{administrative
+	instructions} which are used to express the reduction of various basic
+instructions.
+Administrative instructions cannot be called directly, but are internally used
+by the virtual machine to represent resulting intermediate states.
+As examples, the \texttt{trap} instruction represents the reduction of an
+erroneous state, and the \texttt{invoke} instruction represents the invocation
+of a function instance by its address in memory.
+
 \section{Non-Web Embeddings}
 
-As its name implies, its primary focus is Web-based software; however it is not
-specific or tied to the Web.
+As the name \textit{WebAssembly} implies, its primary focus is Web-based
+software; though it is not solely tied to the Web.
 Other non-Web environments execute WebAssembly for a variety of reasons: its
 safe memory model, its high performance, and it being a universal,
 encapsulated, and independent compile target.
@@ -186,7 +185,6 @@ These APIs are designed to be a common target for embedders to support,
 allowing optimal portability of systems-focused WebAssembly programs while
 maintaining the security and sandboxing of the WebAssembly
 platform\cite{StandardizingWasi}.
-
 WASI's
 \href{https://github.com/WebAssembly/WASI/blob/master/phases/snapshot/docs.md#-fd_readdirfd-fd-buf-pointeru8-buf_len-size-cookie-dircookie---errno-size}{\texttt{fd\_readdir}},
 for example, is a host function that allows WebAssembly code to read the
@@ -211,6 +209,10 @@ boxes that ran inside of web pages once a user installed a separate piece of
 software into their browsers that allowed them to work.
 Because they operated only using browser plugins, they are unsupported on
 popular mobile platforms such as Android and iOS.
+WebAssembly, by contrast,  is developed in the open as a web standard, the
+direction of the project is not at the sole discretion of any one organization.
+WebAssembly virtual machines are integrated directly into modern browsers,
+requiring no additional action by the user to enable.
 If a given applet requires a newer version of the JRE than is installed on the
 system, or if no JRE installed at all, the user must download and install it.
 The Java 8 Runtime Environment installer currently is between 60 and 80 MB,
@@ -218,39 +220,27 @@ depending on the platform.
 Performing this installation requires administrative privileges, preventing
 users on shared systems from running the applet if they are not able to
 perform the installation.
-WebAssembly, by contrast,  is developed in the open as a web standard, the
-direction of the project is not at the sole discretion of any one organization.
-WebAssembly virtual machines are integrated directly into modern browsers,
-requiring no additional action by the user to enable.
+While WebAssembly requires its own execution environment like Flash and Java
+Applets, on the Web this environment is intertwined heavily with existing
+JavaScript engines: the three most popular web browsers, Apple's Safari,
+Google's Chrome, and Mozilla's Firefox, each execute WebAssembly using their
+previously-existing JavaScript
+engines\cite{WebkitAssemblingWebAssembly,V8,SpiderMonkeyDevBlog}.
 
-While both Flash and Java Applets provided ways to interact with JavaScript and
-the web page, the primary way for a user to interact with both were via the
+Both Flash and Java Applets provided ways to interact with JavaScript and the
+web page, but the primary way for a user to interact with both were via the
 plugins' embedded objects within the page.
 This disconnect between the web page and the application resulted in a jarring
 disintegrated experience for users, and poor or nonexistent accessibility by
 default for screen readers.
 WebAssembly, by contrast, does \textit{not} have its own way of interacting
-with the user---all input and output is performed using the JavaScript bridge.
-While WebAssembly does require its own execution environment
-similarly to Flash and Java Applets, on the Web this environment is intertwined
-heavily with existing JavaScript engines.
-The three most popular web browsers, Apple's Safari, Google's Chrome, and
-Mozilla's Firefox, each execute WebAssembly using their previously-existing
-JavaScript engines\cite{WebkitAssemblingWebAssembly,V8,SpiderMonkeyDevBlog}.
-All interactions require utilizing the web embedding's host functions, defined
-by the WebAssembly JavaScript Interface\cite{JSInterface} and Web-specific
-extensions provided by the Web API\cite{WebAPI}.
+with the user---all interactions require utilizing the web embedding's host
+functions, defined by the WebAssembly JavaScript Interface\cite{JSInterface}
+and Web-specific extensions provided by the Web API\cite{WebAPI}.
 While this may result in more work on the part of programmers, one must
 perform all input and output by going through JavaScript, it results
 in a fully integrated experience by the user: something that is \textit{part}
 of the Web, not something that is simply stuck inside the webpage.
-
-While WebAssembly is a language in itself that one could write directly,
-it was designed from the beginning to be a standard compile target.
-While it is possible to compile other languages to be executable by the Java
-Virtual Machine and thus run in Java Applets, doing so is analogous to
-compiling other languages to JavaScript so they can be executed on the
-Web---not a first class way of writing software.
 
 Finally, as previously mentioned, WebAssembly was designed with major goals of
 high performance and security.
@@ -267,11 +257,11 @@ disabling such plugins in order to increase security.
 Steve Jobs, CEO of Apple and the primary inventor of the iPhone, listed many of
 the above reasons for his refusal to provide support for Flash on iPhone
 devices\cite{ThoughtsOnFlash}.
-This lack of support on the popular devices, along with
-the advancement of more powerful open and standardized Web platform
-features, resulted in Flash falling out of favor\cite{FlashKilledOff}.
-Flash was deprecated in 2017 by Adobe, with an end-of-life date of
-December 2020\cite{FlashFuture}.
+This lack of support on popular mobile devices, along with the advancement of
+more powerful open and standardized Web platform features, resulted in Flash
+falling out of favor\cite{FlashKilledOff}.
+Flash was deprecated in 2017 by Adobe, with an end-of-life date of December
+2020\cite{FlashFuture}.
 
 \section{Evolving WebAssembly}
 
@@ -281,14 +271,19 @@ language specification and implementation\cite{WasmHighLevelGoals}.
 For the release of the 1.0 MVP, the main requirements of being a well-defined
 replacement for asm.js with distributable modules, efficient binary bytecode,
 and high performance were the focus\cite{WasmMvp}.
+Version 1.0 of the specification was tagged on July 20,
+2019\cite{WasmWg1.0Release}, and focus is now on adding features to increase
+the language's capabilities.
 
 Development of the specification takes place in public GitHub repositories.
-Version 1.0 of the specification was tagged on July 20,
-2019\cite{WasmWg1.0Release}.
 While a large list of future features are at various levels of consideration
 for post-MVP Wasm, the Community Group and Working Group utilize a phase-based
 proposal system for introducing, discussing, and implementing additional
 features for WebAssembly\cite{WasmFutureFeatures}.
+Proposals may introduce relatively minor behavior changes or describe major
+substantive modifications to the language; no proposal is too small to be
+considered, though larger proposals with greater surface area require more
+deliberation and agreement before being accepted.
 
 For a feature to be adopted into the language, a proposal must be drafted which
 passes through a sequence of phases\cite{WasmW3CProcess}:
@@ -311,8 +306,8 @@ passes through a sequence of phases\cite{WasmW3CProcess}:
 	\item[2] \textbf{Proposed Specification Text Available}:
 		Once the full proposed English specification text is available in the
 		proposal's repository, along with a reasonable community consensus,
-		prototype implementations for are created so that a test suite can be
-		added for the new feature.
+		prototype implementations for the proposed features are created so that
+		a test suite can be added.
 
 	\item[3] \textbf{Implementation Phase}:
 		After a satisfactory test suite is created and passes for the feature
@@ -334,9 +329,8 @@ passes through a sequence of phases\cite{WasmW3CProcess}:
 
 In practice, in order to be deliberate about changes to the language, proposals
 can take a great deal of time before reaching phase 5 and being fully
-integrated into the WebAssembly specification.
-As of the time of this writing, only five proposals have done
-so\cite{FinishedProposals}.
+integrated into the WebAssembly specification; as of the time of this writing
+only five proposals have done so\cite{FinishedProposals}.
 The first such proposal was standardized relatively early in WebAssembly's
 life---prior even to the initial 1.0 release---with the mutable globals
 proposal\cite{MutableGlobalProposal} on June 6,
@@ -352,20 +346,12 @@ advanced on June 9, 2020\cite{MailingList2020-06-09}.
 There are 23 currently outstanding proposals: 6 in phase 3, 4 in phase 2,
 9 in phase 1, and 4 in the pre-proposal phase 0\cite{WasmProposals}.
 
-Proposals may introduce relatively minor behavior changes or describe
-major substantive modifications to the language.
-No proposal is too small to be considered, though conversely larger
-proposals with greater surface area require more deliberation and agreement
-before being accepted.
-
-Proposals may depend on one another.
-For example, a notable proposal for Interface Types adds functionality to
-describe high-level non-primitive values such as strings or records
-so that values of these types can be passed between WebAssembly
-modules\cite{InterfaceTypesProposalExplainer}.
-Because these types are not primitive value types supported by WebAssembly
-such as integers or floating point numbers, there must be way to refer
-to these constructs indirectly.
+Proposals may depend on one another: for example, a notable proposal for
+Interface Types adds functionality to describe high-level non-primitive values
+such as strings or records so that values of these types can be passed between
+WebAssembly modules\cite{InterfaceTypesProposalExplainer}.
+Because these types are not of the four primitive value types supported by
+WebAssembly, there must be way to refer to these constructs indirectly.
 Thus, the Interface Types proposal depends on the Reference Types
 proposal, which adds typed reference values for functions and other external
 types\cite{ReferenceTypesProposalOverview}.
@@ -387,8 +373,8 @@ all community members involved with or interested in the development of the
 language are welcome; the only requirement is registering for a W3C account
 and agreeing to the terms of the group.
 The Community Group's meetings and discussions are facilitated primarily using
-a dedicated GitHub repository\cite{CGMeetings}.
-The Community Group hosts biweekly meetings via video conference.
+a dedicated GitHub repository\cite{CGMeetings}, and it hosts biweekly meetings
+via video conference.
 Meeting minutes and supplemental materials are posted afterward in the
 repository, and off-cycle discussion takes place in the repository's issue
 tracker.
