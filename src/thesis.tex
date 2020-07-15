@@ -21,24 +21,37 @@
 \Program{Computer Science}
 \majorprof{John Boyland}
 \algorithmspagefalse
+\figurespagefalse
+\tablespagefalse
+\ackspagetrue
 
 \Abstract{% TODO
 }
 
-
 \beforepreface
 
-\prefacesection{Preface}
-
-% TODO
-
 \Acks{%
-	% TODO
+	Certainly, this work would not be possible without the foundational
+	work by Conrad Watt.
+	His work continues to be an inspiration, and his kind words of support
+	about my project instills me with pride to this day.
+
+	I would also like to of course thank my adviser Dr. John Boyland, a
+	phenomenal professor who inspired me to pursue proof mechanization and the
+	study of programming language design in the first place, for his guidance,
+	support, and needed nudging that enabled me to complete this project.
+
+	I would also like to thank my close friend Alison Saia for always
+	supporting me and agreeing to proofread this work.
+
+	Finally, I must thank my family, my mother Deborah and sister Justine,
+	for their everlasting and immense support of me and everything I do.
+	I would be nowhere without them.
 }
 
 \afterpreface
 
-\chapter{Introduction}
+\chapter{Introduction} % FIXME
 
 With the only standardized and widely supported language for the Web being
 JavaScript, it became more common for other languages to support JavaScript as
@@ -394,38 +407,36 @@ there are discussions of unifying them\cite{SubgroupsProcessIssue}.
 Formal handwritten proofs continue to be the standard for showing a given
 system holds certain properties, but they suffer from several drawbacks.
 They can be difficult to both read and write, because often they require
-maintaining a great deal of state of the problem space within one's head
-at a given time in order to reason about the problem at hand.
+maintaining a great deal of state of the problem space within one's head at a
+given time.
 Additionally, making adjustments to logical assertions or intermediate
 lemmas is challenging, as even a minor adjustment in one section of the proof
-may cause related statements to no longer hold.
+may cause seemingly unrelated statements elsewhere to no longer hold.
 Finally, they can leave small hidden gaps of missing logic that are easily
 glossed over by reviewers, such as when something seems so \textit{obviously}
 the case that no one bothers to question it, or when ambiguously phrased
 assertions result in potential logical errors.
 
-Proof assistants aim to address these goals, by providing a framework in
+Proof assistants aim to address these goals by providing a framework in
 which logical proofs can be encoded in a structured form and verified
 automatically by the proof assistant software.
 This encoding of a natural language proof to such a verifiable format is
 called \textit{mechanization}.
-Ideally, these mechanizations are also human-readable, and provide a high level
-of ``eyeball closeness'' to any natural language proofs and other source
-materials such as language specifications\cite{JSCert}.
-
 Proof assistants can be used to model a variety of logical or mathematical
 systems, though have received much attention for proving properties about
 programming languages in particular\cite{JSCert,RustBelt,WattMechanizing};
 the (hopefully strict and well-defined) specifications of such languages lend
 themselves well to translation into mechanized forms.
+Ideally, these mechanizations are also human-readable, and provide a high level
+of ``eyeball closeness'' to any natural language proofs and other source
+materials such as language specifications\cite{JSCert}.
 
-Many such proof assistants exist, including Coq\cite{AboutCoq},
+Many proof assistants exist, including Coq\cite{AboutCoq},
 Isabelle\cite{IsabelleOverview}, Lean\cite{LeanProver}, and
 SASyLF\cite{SASyLF}.
 In addition to the fundamental purpose of proof verification, many such tools
 assist proof writers by providing automated proof \textit{tactics} or
-\textit{methods} which attempt to fully automate the proof for a given
-assertion.
+\textit{methods} which attempt to automate the proof for a given assertion.
 While this can greatly reduce the tedium of both writing and reading proofs
 that apply logical steps individually, it also can result in confusion
 when such proof methods do not behave as expected.
@@ -434,6 +445,8 @@ messages, and even cases of simply forgetting a rule when providing the proof
 method with the list of rules to apply are often unclear.
 When reading, automatically-proved assertions provide little context,
 requiring the reader to simply trust the method's claim about the assertion.
+This is particularly the case when certain tactics implicitly include
+lemmas or rules, which is possible in certain circumstances.
 In order to understand the details of the claim, one must deconstruct it
 either mentally when reading or by reducing it to smaller logical steps
 when debugging.
@@ -444,11 +457,11 @@ modifications.
 \chapter{Soundness}
 
 A programming language with a \textit{sound} or \textit{safe} type system
-provides certain guarantees that operations are only performed on values
-of the appropriate type. For example, it prevents one from mistakenly
-adding a number to a string of textual characters, or from attempting
-to access a nonexistent property of a record or object.
-
+provides certain guarantees that operations are only performed on values of the
+appropriate type.
+For example, it prevents one from mistakenly adding a number to a string of
+textual characters, or from attempting to access a nonexistent property of a
+record or object.
 Typically, a programming language's type system is considered sound when it
 exhibits the following two primary properties\cite{pfpl2}:
 
@@ -479,8 +492,8 @@ perform the addition---the type system can only prevent errors involving types.
 Any number of other logical or operational errors can still arise:
 the addition operation in \texttt{add} may overflow the maximum value that can
 be expressed in the number type resulting in the incorrect value being
-returned, or complex conditional logic or even a mistyping may result in a
-subtraction being performed instead, for example.
+returned, or complex conditional logic or even a character input mistake by the
+programmer may result in a subtraction being performed instead, for example.
 In all of such cases the types of the values are correct and sound, but the
 values themselves are not.
 
@@ -490,9 +503,8 @@ As an illustration of this, despite WebAssembly's type-safety and its design
 goal of security, vulnerabilities have been found primarily due to its simple
 linear memory model and the ability to escape the virtual machine sandbox using
 embedder host functions\cite{LehmannEverything}.
-However, one issue brought up by the authors could have been prevented by
-a differently designed sound type system: that memory addresses are simply
-primitive 32-bit integers.
+However, one such issue could have been prevented by a differently designed
+sound type system: that memory addresses are simply primitive 32-bit integers.
 If instead memory addresses had a dedicated type to themselves, functions
 designed to operate on integers and functions designed to accept memory
 address pointers would be incompatible, preventing certain remote code
@@ -505,7 +517,6 @@ WebAssembly's soundness guarantees.
 In order to confirm the soundness claims made by the rather terse proof, a
 mechanized proof of the full language specification was developed
 independently, using the Isabelle/HOL proof assistant\cite{WattMechanizing}.
-
 \citeauthor{WattMechanizing}'s mechanization of core WebAssembly took place
 separately from the development of the language, though it proved crucial in
 its foundation by identifying several major errors in the official WebAssembly
@@ -519,8 +530,8 @@ discovered to be too weak to maintain type safety and rewritten as a
 result\cite[p. 61]{WattMechanizing}.
 
 In addition to proving soundness of the core language via progress and
-preservation, the original mechanization included several notable
-additional properties.
+preservation, the original mechanization included several notable additional
+features.
 Firstly, it included one proposal not existing in the initial version of the
 core language: the Multi-value Proposal\cite{MultiValueProposal}.
 In the original specification, functions and instructions can return at most
@@ -543,10 +554,10 @@ Unfortunately, the mechanization of the language plays no role currently in
 steering WebAssembly development.
 To my knowledge, no work is being done to extend it, and new language features
 are not required to be mechanized before they are adopted into the standard.
-Aside from human checks by the Working Group, which are fallible as mentioned
-in the previous chapter, no process currently exists to prevent proposals from
-causing errors making the type system no longer sound.
-While no requirement exists currently, it may be useful to require proof
+Aside from human checks by the Working Group, which are fallible for reasons
+mentioned in the previous chapter, no process currently exists to prevent
+proposals from causing errors making the type system no longer sound.
+While no requirement exists currently, it would be useful to require proof
 that the type system is not adversely affected before a proposal can be
 finalized and adopted.
 The Isabelle mechanization, particularly when augmented with the language
@@ -884,8 +895,8 @@ many standard library functions and libraries that can be considered derivable
 from core language features.
 
 \citeauthor{RustBelt} mechanized a core calculus of the Rust programming
-language using the Iris proof assistant\cite{RustBelt} and an accompanying
-\textit{extensible soundness proof}.
+language using the Iris logic framework and an accompanying \textit{extensible
+	soundness proof}\cite{RustBelt}.
 Rust is a modern systems language and one of the leading languages with support
 for compiling to WebAssembly.
 Notable features of the language include its novel ownership and borrowing
@@ -896,15 +907,16 @@ implemented at once---in fact, no full language specification even exists to
 use as a starting point---so the authors reduced the language to a
 continuation-passing style language that includes the core lifetime features
 mentioned above named $\lambda_{\textrm{Rust}}$.
-Iris provides built-in support for ownership reasoning, making it a fitting
-choice for a proof assistant for this task.
+Iris\cite{Iris}, a ``Higher-Order Concurrent Separation Logic Framework, implemented and
+verified in the Coq proof assistant'' provides built-in support for ownership
+reasoning, making it a fitting choice for a proof assistant for this task.
 \citeauthor{RustBeltRelaxed} extended this work, accounting for relaxed-memory
 operations in use by concurrent Rust programs\cite{RustBeltRelaxed}.
 
 \citeauthor{Watt_2020}, the author of the original Isabelle WebAssembly
-mechanization on which my work is based, used the Alloy model checker to find
-errors in JavaScript's specification causing concurrency issues and compilation
-problems\cite{Watt_2020}.
+mechanization on which my work is based, used the Alloy model
+checker\cite{Alloy} to find errors in JavaScript's specification causing
+concurrency issues and compilation problems\cite{Watt_2020}.
 In particular, the authors show that JavaScript's concurrency model does not in
 fact support compilation to the ARMv8 scheme which is used in real-world
 applications without violating its specified guarantees, and also show that
