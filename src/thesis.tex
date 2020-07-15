@@ -53,39 +53,37 @@
 
 \chapter{Introduction} % FIXME
 
-With the only standardized and widely supported language for the Web being
-JavaScript, it became more common for other languages to support JavaScript as
-a compile target, with developers writing software in those other languages and
-compiling the software to JavaScript to run on the Web.
-Some of these source languages were designed intentionally with this goal in
-mind, such as CoffeeScript.
-The goals of these projects were to provide developers the same distribution
-platform (the Web) but with the freedom of writing their programs in a
-different syntax.
-However, with the usage of the Web as a universal platform continued to expand,
-authors of other projects wished to compile their software to be run on the
-Web, but had strong reasons requiring the use of a different source language.
-Often, this was a lower-level language used for
-performance reasons, a stricter language for safety reasons, or support for
-existing libraries or large projects in existing languages that cannot easily
-be ported to JavaScript.
-Often, this language is C or C++.
+The modern Web is based on three primary integrated components: document markup
+using HTML, styling using CSS, and interactivity using the JavaScript
+programming language.
+With JavaScript as the only standardized and widely supported programming
+language for the platform, as the usage of the Web as a universal platform
+continued to expand authors of software projects wished to enable their
+software to be run on the Web but had reasons, some technical and others more
+superficial, requiring the use of different source languages.
+Often, this was a lower-level language used for performance reasons, a stricter
+language for safety reasons, or support for existing libraries or large
+projects in existing languages that cannot easily be ported to JavaScript.
+To enable this, it became common for other programming languages to support
+JavaScript as a compile target, allowing developers to write software to be run
+on the Web without having to write JavaScript directly.
 
-The Emscripten project compiles LLVM\footnote{\url{http://llvm.org/}}
-intermediate representation software, which can be generated from C/C++, to
-JavaScript\cite{AboutEmscripten}.
+Some of these source languages were designed intentionally with this goal in
+mind, such as CoffeeScript\cite{CoffeeScript}, while others such as C or C++
+had the capability added by external alternative compilers.
+The Emscripten\cite{AboutEmscripten} project compiles
+LLVM\footnote{\url{http://llvm.org/}} intermediate representation software,
+which can be generated from C/C++, to JavaScript.
 The resulting compiled program utilizes a subset of JavaScript's available
 syntax and operations, called asm.js, which are heavily optimized by JavaScript
 interpreters and just-in-time compilers, as well as the underlying
 hardware\cite{AsmJsResig}.
-
 While this clever usage of the existing platform provided performance
-improvements, JavaScript was not designed as a low-level, performant compile
-target, and the resulting benefits of asm.js relied heavily on JavaScript
-runtime implementations.
+improvements and developer satisfaction, JavaScript was not designed as a
+low-level, performant compile target, and the resulting benefits of asm.js
+relied heavily on JavaScript runtime implementations.
 An attempt to define a formal specification and standardize the platform began
 in 2013, but was abandoned shortly thereafter in 2014\cite{AsmJsSpec}.
-
 The abandonment of asm.js's formalization coincided with discussions amongst
 its project leaders for defining a new ``proper'' bytecode solution for native
 code on the Web; followed shortly thereafter by initial discussions between
