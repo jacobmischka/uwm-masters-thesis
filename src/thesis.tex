@@ -875,22 +875,57 @@ authoring\cite{TailInvokeTypoHistory}.
 \citeauthor{WasmCoqMechanization} developed an independent mechanization of
 WebAssembly using the Coq proof assistant, and came close to proving its
 soundness\cite{WasmCoqMechanization}.
+Challenges involving control instructions, polymorphism, stack-unwinding, and
+infrastructural difficulties involving unintuitive stack ordering in certain
+contexts prevented the author from fully completing the correctness proof.
+Fortunately for myself, all of these challenges were already addressed in the
+Isabelle mechanization on which my work was based, and I was able to take
+advantage of these existing definitions when implementing the proposals.
+The author mentions plans to finish the correctness proof, implement an
+interpreter and type checker, and integrate proposal changes into the
+mechanization in order to prove their soundness as well, much like the Isabelle
+mechanization and my work does and plans to do.
 
 \citeauthor{JSCert} mechanized the JavaScript ECMAScript 5 standard in
 Coq, and created a reference interpreter proved correct with respect to
 the mechanization.
+Unlike WebAssembly with its small number of values and instruction set,
+mechanization of large-scale languages that are intended to be written
+directly are massive undertakings and significantly more challenging.
+Because of this, the JSCert mechanization focuses on the core aspects of the
+language, omitting certain superficial niceties such as for-in loops as well as
+many standard library functions and libraries that can be considered derivable
+from core language features.
 
 \citeauthor{RustBelt} mechanized a core calculus of the Rust programming
-language using the Iris proof assistant\cite{RustBelt}.
-Rust is a modern systems language and one of the leading languages with
-support for compiling to WebAssembly.
+language using the Iris proof assistant\cite{RustBelt} and an accompanying
+\textit{extensible soundness proof}.
+Rust is a modern systems language and one of the leading languages with support
+for compiling to WebAssembly.
+Notable features of the language include its novel ownership and borrowing
+lifetime model for references and their valid lifetimes, and its composable
+trait-based inheritance scheme.
+Like JSCert, the full language is too massive of an undertaking to be
+implemented at once---in fact, no full language specification even exists to
+use as a starting point---so the authors reduced the language to a
+continuation-passing style language that includes the core lifetime features
+mentioned above named $\lambda_{\textrm{Rust}}$.
+Iris provides built-in support for ownership reasoning, making it a fitting
+choice for a proof assistant for this task.
 \citeauthor{RustBeltRelaxed} extended this work, accounting for relaxed-memory
 operations in use by concurrent Rust programs\cite{RustBeltRelaxed}.
 
 \citeauthor{Watt_2020}, the author of the original Isabelle WebAssembly
-mechanization on which my work is based, has mechanized the JavaScript memory
-model in Coq, finding errors in JavaScript's specification causing concurrency
-issues and compilation problems\cite{Watt_2020}.
+mechanization on which my work is based, used the Alloy model checker to find
+errors in JavaScript's specification causing concurrency issues and compilation
+problems\cite{Watt_2020}.
+In particular, the authors show that JavaScript's concurrency model does not in
+fact support compilation to the ARMv8 scheme which is used in real-world
+applications without violating its specified guarantees, and also show that
+JavaScript's model does not guarantee the essential correctness condition of
+Sequential Consistency for Data-Race-Free (SC-DRF) programs.
+An amended version of the specification is proposed that fixes these errors,
+and mechanized in Coq with proofs of compilation and SC-DRF correctness.
 
 \chapter{Future Work} % TODO
 
@@ -898,8 +933,8 @@ Certainly, much remains to be done in the area of WebAssembly soundness
 validation.
 With the three proposals included in this work, as of the time of this writing
 no other proposals which affect the language specification and its soundness
-have been fully adopted into the language, however many proposals remain
-outstanding.
+have been fully adopted into the language.
+However, many proposals remain outstanding.
 In order to maximize the effectiveness of proof mechanization, such attempts
 should be performed before they are adopted in order to confirm that they
 do not adversely affect the soundness of the language's type system;
@@ -912,6 +947,11 @@ core behavior of the system and its typing rules, such as the phase 4
 Reference Types Proposal\cite{ReferenceTypesProposalOverview,WeakeningWasm}
 and phase 2 Threading Proposal\cite{ThreadingProposalOverview,WeakeningWasm}.
 
+The mechanization's extensions have been approved by its original author
+\citeauthor{WattMechanizing}, and plans are in place to integrate the changes
+into the official source and the WebAssembly entry in Isabelle's Archive of
+Formal Proofs\cite{WebAssembly-AFP}.
+
 \chapter{Conclusion}
 
 This paper investigates the WebAssembly language and the soundness of its
@@ -921,9 +961,6 @@ Isabelle proof assistant, my project extends the mechanization to include three
 additions to the language, two of which have since been included into a new
 release of the official WebAssembly language specification, with the third
 remaining a proposed addition still under review and finalization.
-The mechanization's extensions have been approved by its original author
-\citeauthor{WattMechanizing}, and plans are in place to integrate the changes
-into the official source.
 
 Over the course of this project I have had the opportunity to join the
 WebAssembly community, learn about the language and its origins, and take
