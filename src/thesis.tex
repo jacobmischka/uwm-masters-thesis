@@ -589,8 +589,9 @@ By contrast, Isabelle both embraces implicitness and equips users with
 many advanced features and slightly nuanced ways to perform similar tasks.
 
 An Isabelle proof can consist of several distinct but related types of syntax.
-The most common and \textit{de facto} framework used in modern Isabelle proofs
-is Isabelle/Isar, which is modeled after human-readable logical proofs.
+The most common and recommended framework used in modern Isabelle proofs is
+Isabelle/Isar, which is modeled after human-readable logical
+proofs\cite{IsarRef}.
 In addition to the structured Isar syntax, logical steps also can be applied
 individually using the older \textit{apply script} syntax.
 The Isar and apply script syntaxes can be interwoven, resulting in a
@@ -598,8 +599,8 @@ jarring shift when encountered by a less expert user.
 In addition to the two primary \textit{inner} proof syntaxes which perform the
 specifications and proofs, Isabelle proofs must make use of another layer of
 \textit{outer} syntax of Isabelle types and logical terms, an object-logic,
-which is most commonly Isabelle/HOL (higher-order logic). Additionally, logical
-rules can be defined using the Isabelle/Pure syntax.
+which is most commonly Isabelle/HOL (higher-order logic).
+Additionally, logical rules can be defined using the Isabelle/Pure syntax.
 As a result, in order to become productive with Isabelle one must
 learn many different sublanguages; particularly so when diving into
 a large proof that makes extensive use of more advanced features of each.
@@ -632,7 +633,6 @@ into version 1.1 of the WebAssembly specification as of April 9,
 2020\cite{Phase5Advancement}.
 Tail call remains a phase 3 proposal currently in the implementation
 phase\cite{WasmProposals}.
-
 
 \section{Non-trapping Float-to-Int Conversions}
 
