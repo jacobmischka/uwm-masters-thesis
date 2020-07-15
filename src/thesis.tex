@@ -403,7 +403,7 @@ and SIMD proposals.
 Each subgroup determines its own meeting schedule and processes, though
 there are discussions of unifying them\cite{SubgroupsProcessIssue}.
 
-\chapter{Proof Mechanization} % TODO
+\chapter{Proof Mechanization}
 
 Formal handwritten proofs continue to be the standard for showing a given
 system holds certain properties, but they suffer from several drawbacks.
@@ -429,7 +429,7 @@ materials such as language specifications\cite{JSCert}.
 
 Proof assistants can be used to model a variety of logical or mathematical
 systems, though have received much attention for proving properties about
-programming languages in particular; % TODO: citation needed
+programming languages in particular\cite{JSCert,RustBelt,WattMechanizing};
 the (hopefully strict and well-defined) specifications of such languages lend
 themselves well to translation into mechanized forms.
 
@@ -772,7 +772,7 @@ accounting for the new rules.
 Like the previous two proposals mechanized in this project, the Tail Call
 proposal also does not introduce any completely new behavior at a high level.
 Core WebAssembly explicitly disallows tail-call optimizations for
-functions that return the result of a function call. % FIXME: Citation needed
+functions that return the result of a function call.
 To alleviate this and allow developers to opt into such optimizations,
 this proposal introduces a ``return'' version of each existing call
 instruction\cite{TailCallOverview}:
@@ -870,7 +870,7 @@ into the official language specification, the statement existed in its
 incorrect state for over two years, since its initial
 authoring\cite{TailInvokeTypoHistory}.
 
-\chapter{Related Work} % TODO
+\chapter{Related Work}
 
 \citeauthor{WasmCoqMechanization} developed an independent mechanization of
 WebAssembly using the Coq proof assistant, and came close to proving its
@@ -927,7 +927,7 @@ Sequential Consistency for Data-Race-Free (SC-DRF) programs.
 An amended version of the specification is proposed that fixes these errors,
 and mechanized in Coq with proofs of compilation and SC-DRF correctness.
 
-\chapter{Future Work} % TODO
+\chapter{Future Work}
 
 Certainly, much remains to be done in the area of WebAssembly soundness
 validation.
