@@ -4,11 +4,6 @@
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{stmaryrd}
 \usepackage[T1]{fontenc}
-\usepackage{listings}
-\lstset{
-	mathescape,
-	basicstyle=\small
-}
 
 \usepackage[square,numbers]{natbib}
 \bibliographystyle{plainnat}
@@ -26,6 +21,24 @@
 \ackspagetrue
 
 \Abstract{% TODO
+	WebAssembly is a modern low-level programming language designed to provide
+	high performance and security.
+	To enable these goals, the language specifies a relatively small number
+	of low level types, instructions, and language constructs.
+	The language is proven to be sound with respect to its types and execution,
+	and a separate mechanized formalization of the specification and type
+	soundness proofs confirms this.
+	As an emerging technology, the language is continuously being developed,
+	with modifications being proposed and discussed in the open and on
+	a frequent basis.
+
+	In order to ensure the soundness properties exhibited by the original
+	core language are maintained as WebAssembly evolves, these proposals
+	should too be mechanized and verified to be sound.
+	This work extends the existing Isabelle mechanization to include
+	three such proposals which add additional features to the language,
+	and shows that the language maintains its soundness properties with their
+	inclusion.
 }
 
 \beforepreface
@@ -51,7 +64,7 @@
 
 \afterpreface
 
-\chapter{Introduction} % FIXME
+\chapter{Introduction}
 
 The modern Web is based on three primary integrated components: document markup
 using HTML, styling using CSS, and interactivity using the JavaScript
