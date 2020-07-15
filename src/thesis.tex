@@ -356,12 +356,12 @@ can take a great deal of time before reaching phase 5 and being fully
 integrated into the WebAssembly specification; as of the time of this writing
 only five proposals have done so\cite{FinishedProposals}.
 The first such proposal was standardized relatively early in WebAssembly's
-life---prior even to the initial 1.0 release---with the mutable globals
-proposal\cite{MutableGlobalProposal} on June 6,
+life---prior even to the initial 1.0 release---with the Mutable Globals
+Proposal\cite{MutableGlobalProposal} on June 6,
 2018\cite{MeetingNotes2018-06-06}.
-The multi-value proposal, which was in phase 4 at the time of the original
-mechanization and already included in it, and the non-trapping float-to-int and
-sign-extension operators proposals mechanized in this project were all
+The Multi-value Proposal, which was in phase 4 at the time of the original
+mechanization and already included in it, and the Non-Trapping Float-to-Int and
+Sign-Extension Operators proposals mechanized in this project were all
 integrated at once on March 11, 2020\cite{MeetingNotes2020-03-11}.
 Finally, the JavaScript BigInt to WebAssembly i64 Integration
 proposal\cite{JSBigIntProposal}, a proposal which does not modify
@@ -581,7 +581,7 @@ system stays in tact.
 My project builds on the existing Isabelle proof, extending the initial
 mechanization to include extensions provided by three late-stage proposals:
 Non-trapping Float-to-Int Conversions\cite{NontrappingFloatToIntProposal},
-Sign Extension Operations\cite{SignExtensionOpsProposal},
+Sign Extension Operators\cite{SignExtensionOpsProposal},
 and Tail Call\cite{TailCallProposal}.
 Definitions and proofs for the type checker and interpreter are also updated
 accordingly.
@@ -629,7 +629,7 @@ to a premise or rule in order to make use of it, leading to a given
 assertion being shown simply by \texttt{3}, for example.
 While the meaning of such names can be shown using an Isabelle command,
 reading such a proof can quickly become confusing even to advanced users.
-Finally, such numeric indices can also cause issues when refactoring or
+Finally, these numeric indices can also cause issues when refactoring or
 adding to proofs, as in the case of my mechanization, where the definition
 of a new instruction type causes all subsequent instruction types to have
 their corresponding indices shifted accordingly.
@@ -637,14 +637,14 @@ Thus, it was common for me to have to adjust a reference from \texttt{14}
 to \texttt{15} because of the newly-added rule \texttt{12}, for example.
 
 At the outset of my mechanization, two of the newly-mechanized proposals,
-non-trapping float-to-int conversions and sign extension operations,
+Non-Trapping Float-to-Int Conversions and Sign Extension Operators,
 were at phase 4.
 After the mechanized proofs were completed as part of this project,
-they (along with the multi-value proposal already present in the initial
+they (along with the Multi-value Proposal already present in the initial
 mechanization), have advanced to phase 5 and were fully integrated
 into version 1.1 of the WebAssembly specification as of April 9,
 2020\cite{Phase5Advancement}.
-Tail call remains a phase 3 proposal currently in the implementation
+Tail Call remains a phase 3 proposal currently in the implementation
 phase\cite{WasmProposals}.
 
 \section{Non-trapping Float-to-Int Conversions}
@@ -680,30 +680,24 @@ succeeded or \texttt{None} otherwise, indicating an impossible conversion, or a
 conversion operation that failed and trapped.
 At a high level, the new \texttt{cvt\_sat} saturating conversion function
 behaves identically to the existing \texttt{cvt}, it simply fails in fewer
-cases.
-As a result, the required additions were straightforward to model based on the
-existing definition.
+cases; as a result the required additions were straightforward to model based
+on the existing definition.
 Because the new instructions do not trap, I initially set out to model the
 \texttt{cvt\_sat} collection of operations so that they did not return an
 \texttt{Option} and simply returned a value in all cases.
-This was a mistake, as \texttt{cvt} returns \texttt{None} not only
-when the conversion failed, but also when no such instruction exists
-to perform the conversion for the given types, such as a hypothetical
-conversion from an \texttt{f64} to an \texttt{f64}.
-In order for the new saturating conversion function to fit nicely
-into the existing mechanization, it must to be able to return \texttt{None}
-when the operation was impossible, such as converting to the same type as
-the original input type.
-After struggling to modify the surrounding proofs to handle such impossible
-conversions elsewhere, I decided on a different course and reverted
-\texttt{cvt\_sat} to return an \texttt{Option} like the non-saturating
-version, but which always returns \texttt{Some} value when performing a
-truncation.
-This resulted in a straightforward addition of less resistance, which
-maintains language's proof of soundness without requiring drastic changes to
-the existing theorems and lemmas.
-During the mechanization of this proposal, 172 lines were added and 176
-modified; many such modifications being numeric index adjustments.
+This was a mistake, in order for the new saturating conversion function to fit
+nicely into the existing mechanization, it must to be able to return
+\texttt{None} when the operation was impossible, such as converting to the same
+type as the original input type.
+After struggling to modify the surrounding proofs to handle impossible
+conversions elsewhere, reverting \texttt{cvt\_sat} to return an \texttt{Option}
+like the non-saturating version, but which always returns \texttt{Some} value
+when performing a truncation, resulted in a straightforward addition of less
+resistance, maintaining the language's proof of soundness without requiring
+drastic changes to the existing theorems and lemmas.
+Overall, 172 lines were added and 176 lines were modified during the
+mechanization of this proposal, many of the modifications being minor numeric
+index adjustments accounting for the new rules.
 
 \section{Sign Extension Operators}
 
@@ -771,9 +765,8 @@ The interpreter additionally required one new lemma stating
 that a sign-extension operation always either succeeds or results
 in an error if the types are invalid, which Isabelle was able to prove
 trivially by case analysis.
-Overall, 104 lines were added and 223 modified during the mechanization of this
-proposal, many of the modifications being minor numeric index adjustments
-accounting for the new rules.
+During the mechanization of this proposal 104 lines were added and 223
+modified, many modifications being minor numeric index adjustments.
 
 \section{Tail Call}
 
@@ -866,16 +859,15 @@ return values could result in non-values being passed as arguments).
 This mistake was brought to the attention of the maintainers and was fixed
 shortly thereafter\cite{TailInvokeIssue10}.
 
-While the oversight was relatively minor in terms of size, only a single
-letter's difference, finding otherwise easily-overlooked mistakes is one of the
-primary strengths of mechanization in proofs, as mentioned earlier in this
-document.
-Whereas the human eye can easily disregard a small typo or gloss over that
-seems obvious, proof assistants insist that everything be proved without a
+Despite the oversights relatively minor size, only a single letter's
+difference, finding otherwise easily-overlooked mistakes is one of the primary
+strengths of mechanization in proofs as mentioned earlier in this document;
+while the human eye can easily disregard a small typo or gloss over something
+that seems obvious, proof assistants insist that everything be proved without a
 doubt.
-While this typo may have been caught by a reviewer before being fully adopted
-into the official language specification, the statement existed in its
-incorrect state for over two years, since its initial
+This typo may have been caught by a reviewer before being fully adopted into
+the official language specification, though the statement existed in its
+incorrect state for over two years, since the proposal's initial
 authoring\cite{TailInvokeTypoHistory}.
 
 \chapter{Related Work}
@@ -913,14 +905,15 @@ for compiling to WebAssembly.
 Notable features of the language include its novel ownership and borrowing
 lifetime model for references and their valid lifetimes, and its composable
 trait-based inheritance scheme.
-Like JSCert, the full language is too massive of an undertaking to be
+Like with JSCert, the full language is too massive of an undertaking to be
 implemented at once---in fact, no full language specification even exists to
 use as a starting point---so the authors reduced the language to a
 continuation-passing style language that includes the core lifetime features
 mentioned above named $\lambda_{\textrm{Rust}}$.
-Iris\cite{Iris}, a ``Higher-Order Concurrent Separation Logic Framework, implemented and
-verified in the Coq proof assistant'' provides built-in support for ownership
-reasoning, making it a fitting choice for a proof assistant for this task.
+Iris\cite{Iris}, a ``Higher-Order Concurrent Separation Logic Framework,
+implemented and verified in the Coq proof assistant'' provides built-in support
+for ownership reasoning, making it a fitting choice for a proof assistant for
+this task.
 \citeauthor{RustBeltRelaxed} extended this work, accounting for relaxed-memory
 operations in use by concurrent Rust programs\cite{RustBeltRelaxed}.
 
@@ -978,15 +971,16 @@ Gaining understanding of a core standardized language for the Web during its
 infancy and becoming familiar with its evolution process will be of immense
 benefit to me as a web developer as the language and ecosystem matures.
 On a higher level, my efforts in understanding and modeling a language
-specification and its type system and proving its soundness has given me a
+specification and its type system and proving its soundness have given me a
 deeper understanding of programming language design and type theory as a whole.
 Small details in an instruction's execution or typing rules often have large
-implications when the program is checked or executed.
+implications when the program is validated or executed.
+
 Even for a rather simple language like WebAssembly with its four primitive
 types, small instruction set, and straightforward memory and execution models,
-issues can quickly arise and soundness is lost if a language feature is modeled
-even slightly incorrectly---for example when asserting that an incorrect number
-of values are present.
+issues can quickly arise and soundness can be lost if a language feature is
+modeled even slightly incorrectly---for example when asserting that an
+incorrect number of values are present.
 Ensuring soundness and proper execution is critical when designing a language
 so that it holds the properties that it claims to: the type system will prevent
 bugs and the language will do what the programmer tells it to.
@@ -995,8 +989,6 @@ particularly difficult to ensure that it stays so when making changes to the
 language.
 Proof mechanization is one way to ease this burden, providing language
 authors a more foolproof way to keep their promises to their users.
-
-% \appendix
 
 \clearpage
 
