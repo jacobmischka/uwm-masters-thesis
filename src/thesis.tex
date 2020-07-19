@@ -24,7 +24,7 @@
 	WebAssembly is a modern low-level programming language designed to provide
 	high performance and security.
 	To enable these goals, the language specifies a relatively small number
-	of low level types, instructions, and language constructs.
+	of low-level types, instructions, and language constructs.
 	The language is proven to be sound with respect to its types and execution,
 	and a separate mechanized formalization of the specification and type
 	soundness proofs confirms this.
@@ -49,7 +49,7 @@
 	His work continues to be an inspiration, and his kind words of support
 	about my project instills me with pride to this day.
 
-	I would also like to of course thank my adviser Dr. John Boyland, a
+	I would also like to of course thank my adviser Dr.\ John Boyland, a
 	phenomenal professor who inspired me to pursue proof mechanization and the
 	study of programming language design in the first place, for his guidance,
 	support, and needed nudging that enabled me to complete this project.
@@ -69,11 +69,10 @@
 The modern Web is based on three primary integrated components: document markup
 using HTML, styling using CSS, and interactivity using the JavaScript
 programming language.
-With JavaScript as the only standardized and widely supported programming
-language for the platform, as the usage of the Web as a universal platform
-continued to expand authors of software projects wished to enable their
-software to be run on the Web but had reasons, some technical and others more
-superficial, requiring the use of different source languages.
+As the usage of the Web as a universal platform continued to expand, authors of
+software projects wished to enable their software to be run on the Web but
+various factors, some technical and others more superficial, prompted the
+demand of source languages besides JavaScript.
 Often, this was a lower-level language used for performance reasons, a stricter
 language for safety reasons, or support for existing libraries or large
 projects in existing languages that cannot easily be ported to JavaScript.
@@ -88,7 +87,7 @@ The Emscripten\cite{AboutEmscripten} project compiles
 LLVM\footnote{\url{http://llvm.org/}} intermediate representation software,
 which can be generated from C/C++, to JavaScript.
 The resulting compiled program utilizes a subset of JavaScript's available
-syntax and operations, called asm.js, which are heavily optimized by JavaScript
+syntax and operations, called asm.js, which is heavily optimized by JavaScript
 interpreters and just-in-time compilers, as well as the underlying
 hardware\cite{AsmJsResig}.
 While this clever usage of the existing platform provided performance
@@ -99,7 +98,7 @@ An attempt to define a formal specification and standardize the platform began
 in 2013, but was abandoned shortly thereafter in 2014\cite{AsmJsSpec}.
 The abandonment of asm.js's formalization coincided with discussions amongst
 its project leaders for defining a new ``proper'' bytecode solution for native
-code on the Web; followed shortly thereafter by initial discussions between
+code on the Web, followed shortly thereafter by initial discussions between
 browser developers and JavaScript runtime implementers about ``WebAsm''.
 As this project evolved and was fleshed out, the WebAssembly project began and
 was announced publicly on June 17, 2015\cite{HistoryWasmTalk}.
@@ -112,7 +111,7 @@ The language is defined as a virtual instruction set, encapsulating the
 semantics of the program in a format that is independent of the underlying
 system on which the program runs.
 WebAssembly supports two official formats: a readable text format and a more
-efficient binary format\cite{WasmSpec}; both formats are based directly from
+efficient binary format\cite{WasmSpec}; both formats are based directly on
 the language's abstract syntax.
 The binary format is a space-efficient mapping of syntax expressions
 into a sequence of raw bytes, with each distinct sequence of bytes
@@ -125,7 +124,7 @@ WebAssembly provides safety guarantees by fully encapsulating logic and
 execution at a low level.
 Values consist of only 32- and 64-bit variants of integers and IEEE 754
 floating point numbers\cite[p. 2--3]{WasmSpec}.
-The operational semantics of the language is primarily that of a stack machine,
+The operational semantics of the language are primarily that of a stack machine,
 wherein operations are performed by removing operands from a last-in-first-out
 stack of values and pushing the operation's result onto the stack afterward.
 Strictly speaking this is not completely true, as the language's inclusion of
@@ -136,8 +135,8 @@ compiler\cite{IntroducingLightbeam}.
 Memory operations are fully sandboxed by the WebAssembly execution environment.
 WebAssembly memories are single lists of raw bytes\cite[p. 16]{WasmSpec}.
 Each WebAssembly module can include a single memory vector, and any
-computations the module performs that requires memory utilizes this list
-of bytes, no direct access of the underlying system's physical or virtual
+computations the module performs that require memory utilizes this list
+of bytes; no direct access of the underlying system's physical or virtual
 memory is permitted.
 
 WebAssembly programs are executed by virtual machines, which provide an
@@ -155,8 +154,8 @@ Embedding environments are free to expose any level of functionality to
 WebAssembly, enabled by the concept of \textit{host functions} provided by the
 environment that can be invoked by WebAssembly.
 Host functions can receive and return values like regular functions, though
-they can also modify the store, the abstract model of the program's global
-state\cite[p. 78]{WasmSpec}.
+they can also modify the \textit{store}, the abstract model of the program's
+global state\cite[p. 78]{WasmSpec}.
 WebAssembly itself provides no guarantees about the determinism of host
 functions---as far as WebAssembly is concerned, such functions can be assumed
 to succeed or fail arbitrarily at the whims of the embedding environment.
@@ -175,10 +174,10 @@ value types, parametric instructions which can operate on any value type,
 variable instructions for manipulating local or global variables, memory
 instructions for manipulating the linear memory, and control instructions for
 manipulating the program's control flow.
-Notable for a lower level language, WebAssembly's control flow is fully
-structured: there is no rudimentary \texttt{goto}-like construct, the flow of
-the program is manipulated only by structured instructions such as blocks and
-loops, if statements, and branch instructions.
+Notable for a lower-level language, WebAssembly's control flow is fully
+structured: there is no rudimentary \texttt{goto}-like construct, and the flow
+of the program is manipulated only by structured instructions such as blocks
+and loops, if statements, and branch instructions.
 In addition to the \textit{basic instructions} that are available to
 programmers, the specification also defines several \textit{administrative
 	instructions} which are used to express the reduction of various basic
@@ -198,7 +197,7 @@ safe memory model, its high performance, and it being a universal,
 encapsulated, and independent compile target.
 The last is particularly interesting given its bidirectional implications: a
 programmer can truly write and compile a piece of software once and run it
-nearly anywhere; and a programmer can depend on other software written in any
+nearly anywhere, and a programmer can depend on other software written in any
 language that supports WebAssembly.
 
 WASI (WebAssembly System Interface) is a project that defines a family of APIs
@@ -214,7 +213,7 @@ WASI's
 for example, is a host function that allows WebAssembly code to read the
 contents of a directory on the environment's filesystem.
 
-\section{Past experiments}
+\section{Past Experiments}
 
 The concept of an alternative to JavaScript for running applications on the Web
 is not entirely new.
@@ -228,17 +227,18 @@ development of WebAssembly.
 Firstly and primarily, both Flash and Java Applets were individual projects by
 single organizations, Adobe and Oracle respectively, that operated in web
 browsers through the use of plugins.
-They were not \textit{part} of the standardized Web, they were instead isolated
+They were not \textit{part} of the standardized Web; they were instead isolated
 boxes that ran inside of web pages once a user installed a separate piece of
 software into their browsers that allowed them to work.
 Because they operated only using browser plugins, they are unsupported on
 popular mobile platforms such as Android and iOS.
-WebAssembly, by contrast,  is developed in the open as a web standard, the
+WebAssembly, by contrast, is developed in the open as a web standard---the
 direction of the project is not at the sole discretion of any one organization.
 WebAssembly virtual machines are integrated directly into modern browsers,
 requiring no additional action by the user to enable.
 If a given applet requires a newer version of the JRE than is installed on the
-system, or if no JRE installed at all, the user must download and install it.
+system, or if no JRE is installed at all, the user must download and install
+it.
 The Java 8 Runtime Environment installer currently is between 60 and 80 MB,
 depending on the platform.
 Performing this installation requires administrative privileges, preventing
@@ -260,11 +260,11 @@ default for screen readers.
 WebAssembly, by contrast, does \textit{not} have its own way of interacting
 with the user---all interactions require utilizing the web embedding's host
 functions, defined by the WebAssembly JavaScript Interface\cite{JSInterface}
-and Web-specific extensions provided by the Web API\cite{WebAPI}.
-While this may result in more work on the part of programmers, one must
-perform all input and output by going through JavaScript, it results
-in a fully integrated experience by the user: something that is \textit{part}
-of the Web, not something that is simply stuck inside the webpage.
+and Web-specific extensions provided by the Web API\cite{WebAPI} and use
+JavaScript as an intermediary.
+While this may result in more work on the part of programmers, it results in a
+fully integrated experience by the user: something that is \textit{part} of the
+Web, not something that is simply stuck inside the web page.
 
 Finally, as previously mentioned, WebAssembly was designed with major goals of
 high performance and security.
@@ -272,8 +272,8 @@ While Java applets and Flash applications can offer high performance in optimal
 circumstances, their reliance on software installed on the host system has
 security implications.
 Integrating with another piece of software introduces new potential vectors for
-attackers to exploit---the larger the attack surface creates more opportunities
-for software bugs to result in security
+attackers to exploit---the larger attack surface creates more opportunities for
+software bugs to result in security
 vulnerabilities\cite{JRECveDetails,FlashSecurityUpdates}.
 Security researchers\cite{Pwn2OwnMillerInterview} and the \citeauthor{CISASecuringWebBrowser}\cite{CISASecuringWebBrowser} suggest
 disabling such plugins in order to increase security.
@@ -289,8 +289,8 @@ Flash was deprecated in 2017 by Adobe, with an end-of-life date of December
 
 \section{Evolving WebAssembly}
 
-The defined goals of the WebAssembly project details the process for evolving
-the language: incrementally after providing a minimum viable product (MVP) core
+The defined goals of the WebAssembly project detail the process for evolving
+the language: incrementally, after providing a minimum viable product (MVP) core
 language specification and implementation\cite{WasmHighLevelGoals}.
 For the release of the 1.0 MVP, the main requirements of being a well-defined
 replacement for asm.js with distributable modules, efficient binary bytecode,
@@ -316,7 +316,7 @@ passes through a sequence of phases\cite{WasmW3CProcess}:
 	\item[0] \textbf{Pre-Proposal}:
 		An individual contributor files an issue to present the idea,
 		optionally adds the proposal to the proposal list, and a proposal
-		champion or champions emerges which submits the proposal to the
+		champion or champions emerges who submit the proposal to the
 		Community Group's biweekly agenda. The Community Group votes on general
 		interest in further research and development of the proposal.
 
@@ -324,8 +324,8 @@ passes through a sequence of phases\cite{WasmW3CProcess}:
 		After being approved by the Community Group, the proposal is added
 		to the proposal list if it has not been added already.
 		A new repository is forked from the main WebAssembly specification,
-		which is used to facilitate discussion about, and design and
-		specification of, the feature.
+		which is used to facilitate discussion, design, and specification of
+		the feature.
 
 	\item[2] \textbf{Proposed Specification Text Available}:
 		Once the full proposed English specification text is available in the
@@ -375,7 +375,7 @@ Interface Types adds functionality to describe high-level non-primitive values
 such as strings or records so that values of these types can be passed between
 WebAssembly modules\cite{InterfaceTypesProposalExplainer}.
 Because these types are not of the four primitive value types supported by
-WebAssembly, there must be way to refer to these constructs indirectly.
+WebAssembly, there must be a way to refer to these constructs indirectly.
 Thus, the Interface Types proposal depends on the Reference Types
 proposal, which adds typed reference values for functions and other external
 types\cite{ReferenceTypesProposalOverview}.
@@ -385,7 +385,7 @@ particular parts of the language and ecosystem.
 The two primary groups involved with the development of the language and
 ecosystem are the Working Group and Community Group.
 The Working Group is an official World Wide Web Consortium (W3C) group
-consisting of the primary group of stakeholders in charge with
+consisting of the primary group of stakeholders in charge of
 steering the development of the language.
 The Working Group currently is comprised of 48 participants representing
 14 organizations including American organizations such as Google, Apple, Intel,
@@ -415,7 +415,7 @@ there are discussions of unifying them\cite{SubgroupsProcessIssue}.
 
 \chapter{Proof Mechanization}
 
-Formal handwritten proofs continue to be the standard for showing a given
+Formal handwritten proofs continue to be the standard for showing that a given
 system holds certain properties, but they suffer from several drawbacks.
 They can be difficult to both read and write, because often they require
 maintaining a great deal of state of the problem space within one's head at a
@@ -492,7 +492,7 @@ of the soundness of a particular \textit{implementation} of the language;
 a mistake in a particular WebAssembly virtual machine may still result
 in undefined behavior.
 Secondly, while a type-safe programming language prevents programmers from
-making mistakes regarding to unexpected or unconsidered possibilities
+making mistakes with respect to unexpected or unconsidered possibilities
 regarding values and their types, it by no means ensures that all
 code is bug-free.
 As an example, consider an \texttt{add} function that accepts two numbers and
@@ -574,7 +574,7 @@ finalized and adopted.
 The Isabelle mechanization, particularly when augmented with the language
 additions included with this work, is the best starting point for such a
 requirement and the adoption of a more rigid process for ensuring the type
-system stays in tact.
+system stays intact.
 
 \chapter{Incremental Soundness}
 
@@ -588,16 +588,16 @@ accordingly.
 The source code for my mechanization can be found on GitHub\cite{WasmIsabelle}.
 
 A great deal of the challenge in this task involved learning how to effectively
-use Isabelle at the same time.
+use Isabelle.
 Prior to this project I was only vaguely familiar with the advanced features
 utilized in the original WebAssembly mechanization, despite being familiar
 with the core concepts of programming language proof mechanization as a whole
-with another proof assistant SASyLF and reading the official Isabelle tutorials
+with another proof assistant, SASyLF, and reading the official Isabelle tutorials
 and reference manuals.
 The SASyLF proof assistant is designed to be explicit: one must specify exactly
-which logical rules and assumptions are being applied each step along the way.
-Additionally, it is designed to be relatively simple to use, with relatively
-few advanced features and logical constructs.
+which logical rules and assumptions are being applied each step in the process.
+Additionally, it is designed to be simple to use, with relatively few advanced
+features and logical constructs.
 By contrast, Isabelle both embraces implicitness and equips users with
 many advanced features and slightly nuanced ways to perform similar tasks.
 
@@ -605,13 +605,13 @@ An Isabelle proof can consist of several distinct but related types of syntax.
 The most common and recommended framework used in modern Isabelle proofs is
 Isabelle/Isar, which is modeled after human-readable logical
 proofs\cite{IsarRef}.
-In addition to the structured Isar syntax, logical steps also can be applied
+In addition to the structured Isar syntax, logical steps can be applied
 individually using the older \textit{apply script} syntax.
 The Isar and apply script syntaxes can be interwoven, resulting in a
-jarring shift when encountered by a less expert user.
+jarring shift when encountered by a less experienced user.
 In addition to the two primary \textit{inner} proof syntaxes which perform the
 specifications and proofs, Isabelle proofs must make use of another layer of
-\textit{outer} syntax of Isabelle types and logical terms, an object-logic,
+\textit{outer} syntax of Isabelle types and logical terms: an object-logic,
 which is most commonly Isabelle/HOL (higher-order logic).
 Additionally, logical rules can be defined using the Isabelle/Pure syntax.
 As a result, in order to become productive with Isabelle one must
@@ -641,7 +641,7 @@ Non-Trapping Float-to-Int Conversions and Sign Extension Operators,
 were at phase 4.
 After the mechanized proofs were completed as part of this project,
 they (along with the Multi-value Proposal already present in the initial
-mechanization), have advanced to phase 5 and were fully integrated
+mechanization) have advanced to phase 5 and were fully integrated
 into version 1.1 of the WebAssembly specification as of April 9,
 2020\cite{Phase5Advancement}.
 Tail Call remains a phase 3 proposal currently in the implementation
@@ -651,8 +651,8 @@ phase\cite{WasmProposals}.
 
 The first of the three mechanized, this proposal introduces 8 new floating
 point truncation instructions of the form
-\texttt{i\{32,64\}.trunc\_sat\_f\{32,64\}\_\{u,s\}}, permutation groups
-representing destination type, source type, and signedness,
+\texttt{i\{32,64\}.trunc\_sat\_f\{32,64\}\_\{u,s\}}, the bracketed groups
+representing the selection of destination type, source type, and signedness,
 respectively\cite{NontrappingFloatToIntOverview}.
 
 These new instructions are \textit{saturating}, meaning that their results are
@@ -663,10 +663,10 @@ point number could not be represented in the target integer type's possible
 range of values, or in the event that the floating point number was the special
 ``not a number'' value as defined by the IEEE floating point standard
 (\texttt{NaN}).
-Instead of trapping, these new instructions instead return the minimum or
-maximum target integer value in case of underflow or overflow, and 0 in the
-event that the source floating point number is \texttt{NaN}, resulting in
-operations that never fail.
+Instead of trapping, these new instructions return the minimum or maximum
+target integer value in case of underflow or overflow, and 0 in the event that
+the source floating point number is \texttt{NaN}, resulting in operations that
+never fail.
 
 In the mechanization, numeric conversion is performed using a \texttt{cvt}
 conversion function which determines the correct operations for the types of
@@ -679,13 +679,13 @@ operations can fail resulting in a trap, \texttt{cvt} returns an
 succeeded or \texttt{None} otherwise, indicating an impossible conversion, or a
 conversion operation that failed and trapped.
 At a high level, the new \texttt{cvt\_sat} saturating conversion function
-behaves identically to the existing \texttt{cvt}, it simply fails in fewer
+behaves identically to the existing \texttt{cvt} but simply fails in fewer
 cases; as a result the required additions were straightforward to model based
 on the existing definition.
 Because the new instructions do not trap, I initially set out to model the
 \texttt{cvt\_sat} collection of operations so that they did not return an
 \texttt{Option} and simply returned a value in all cases.
-This was a mistake, in order for the new saturating conversion function to fit
+This was a mistake; in order for the new saturating conversion function to fit
 nicely into the existing mechanization, it must to be able to return
 \texttt{None} when the operation was impossible, such as converting to the same
 type as the original input type.
@@ -718,8 +718,8 @@ existing instructions\cite{SignExtensionOpsOverview}:
 Already present in the MVP release of WebAssembly are \texttt{i64.extend\_s}
 and \texttt{i64.extend\_u}\cite[p. 11]{WasmSpec}, for extending a 32-bit
 integer value (signed or unsigned, respectively) to a 64-bit integer value.
-At first inspection, this seems like the only extension operations required,
-as WebAssembly only supports 32- and 64-bit integers.
+At first inspection, these seem like the only extension operations required, as
+WebAssembly only supports 32- and 64-bit integers.
 These new instructions, by contrast, do not actually modify the type of the
 value, instead only its contents: \texttt{i32.extend8\_s} receives an
 \texttt{i32} type as input and returns an \texttt{i32} type as output.
@@ -749,9 +749,9 @@ straightforward to mechanize.
 Each of the new instructions were added, along with a new \texttt{extendsop}
 typing rule and \texttt{extendsop\_i32} and \texttt{extendsop\_i64} reduction
 rules.
-Each of the new rules receives an \texttt{ExtendS} argument,
-which is a new basic instruction variant representing one of
-8, 16, or 32-bit sign extension operation.
+Each of the new rules receives an \texttt{ExtendS} argument, which is a new
+basic instruction variant representing either 8, 16, or 32-bit sign extension
+operation.
 Because \texttt{extend32\_s} is only valid for 64-bit integers,
 the \texttt{i64} type had to be extended from its original \texttt{wasm\_int}
 defined type to a newly-created \texttt{wasm\_int64} type which contains
@@ -762,7 +762,7 @@ Finally, with the additions in place, all that remained was to account
 for the new possible instruction types in several existing lemmas
 and theorems, and to update the interpreter and checker modules.
 The interpreter additionally required one new lemma stating
-that a sign-extension operation always either succeeds or results
+that a sign extension operation always either succeeds or results
 in an error if the types are invalid, which Isabelle was able to prove
 trivially by case analysis.
 During the mechanization of this proposal 104 lines were added and 223
@@ -785,8 +785,8 @@ instruction\cite{TailCallOverview}:
 		which calls a function via a reference to memory
 \end{itemize}
 
-These new instructions are defined to ``unwind the stack'' in the same way
-a call to the normal \texttt{return} instruction does: by clearing the current
+These new instructions are defined to ``unwind the stack'' in the same way a
+call to the normal \texttt{return} instruction does: by clearing the current
 execution frame and removing it, along with its local values, from the stack.
 Because the arguments to the called function are also a part of that frame,
 the new instructions first must remove those argument values, and replace
@@ -797,10 +797,8 @@ Semantically, the new instructions actually do very little themselves:
 \texttt{return\_call} is defined almost identically to \texttt{call},
 and \texttt{return\_call\_indirect} to \texttt{call\_indirect}.
 The substantial addition is the \texttt{return\_invoke} tail-invocation
-administrative instruction.
-As an administrative instruction it cannot be used directly by the programmer,
-\texttt{return\_invoke} defines the execution semantics of the additional
-behavior.
+administrative instruction, which defines the execution semantics of the
+additional behavior.
 First, it validates that the function to be called exists, and that there are
 enough values on top of the stack to be used as its defined number of
 arguments.
@@ -826,9 +824,10 @@ points for the additions.
 Unlike the two previous proposals, updating the interpreter after modeling the
 new instructions was not trivial.
 Because tail-invocation introduces new behavior at the completion of a step of
-evaluation, a new result step type \texttt{RSTailInvoke} had to be introduced.
-The existing returning result step type \texttt{RSReturn} was not sufficient as
-it only contains the list of returned values to the next step of evaluation,
+evaluation, a new result step type, \texttt{RSTailInvoke}, had to be
+introduced.
+The existing returning result step type, \texttt{RSReturn}, was not sufficient
+as it only contains the list of returned values to the next step of evaluation,
 while \texttt{RSTailInvoke} contains the function to be invoked as well.
 This modeling, while determined independently, mirrors that used in the
 official proposal interpreter\cite{TailCallEvalImpl}.
@@ -859,8 +858,8 @@ return values could result in non-values being passed as arguments).
 This mistake was brought to the attention of the maintainers and was fixed
 shortly thereafter\cite{TailInvokeIssue10}.
 
-Despite the oversights relatively minor size, only a single letter's
-difference, finding otherwise easily-overlooked mistakes is one of the primary
+Despite the oversight's relatively minor size (only a single letter's
+difference), finding otherwise easily-overlooked mistakes is one of the primary
 strengths of mechanization in proofs as mentioned earlier in this document;
 while the human eye can easily disregard a small typo or gloss over something
 that seems obvious, proof assistants insist that everything be proved without a
@@ -949,7 +948,7 @@ core behavior of the system and its typing rules, such as the phase 4
 Reference Types Proposal\cite{ReferenceTypesProposalOverview,WeakeningWasm}
 and phase 2 Threading Proposal\cite{ThreadingProposalOverview,WeakeningWasm}.
 
-The mechanization's extensions have been approved by its original author
+The mechanization's extensions have been approved by its original author,
 \citeauthor{WattMechanizing}, and plans are in place to integrate the changes
 into the official source and the WebAssembly entry in Isabelle's Archive of
 Formal Proofs\cite{WebAssembly-AFP}.
