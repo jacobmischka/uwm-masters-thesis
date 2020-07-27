@@ -1,12 +1,13 @@
 \documentclass[12pt]{report}
 \usepackage{uwmthesis}
-\usepackage{cite}
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{stmaryrd}
 \usepackage[T1]{fontenc}
 
-\usepackage[square,numbers]{natbib}
-\bibliographystyle{plainnat}
+\usepackage[backend=bibtex,style=numeric]{biblatex}
+\addbibresource{thesis.bib}
+\addbibresource{wasm-cg.bib}
+\addbibresource{proof-assistants.bib}
 
 \begin{document}
 
@@ -993,9 +994,7 @@ language.
 Proof mechanization is one way to ease this burden, providing language
 authors a more foolproof way to keep their promises to their users.
 
-\clearpage
-
-\bibliography{thesis,wasm-cg,proof-assistants}
+\printbibliography
 \addcontentsline{toc}{chapter}{Bibliography}
 
 \end{document}
