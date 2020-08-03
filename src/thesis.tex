@@ -153,12 +153,12 @@ In order to interact with the host environment, WebAssembly embedders may
 expose functionality via application programming interfaces (APIs): defined
 functions that WebAssembly can use to interact with the environment.
 With the Web as the primary embedding environment, Web embeddings provide a
-defined JavaScript API that allows interaction between web pages.
+defined JavaScript API that allows interaction with web pages.
 
 Embedding environments are free to expose any level of functionality to
 WebAssembly, enabled by the concept of \textit{host functions} provided by the
 environment that can be invoked by WebAssembly.
-Host functions can receive and return values like regular functions, though
+Host functions can receive and return values like regular functions, and
 they can also modify the \textit{store}, the abstract model of the program's
 global state\cite[p. 78]{WasmSpec}.
 WebAssembly itself provides no guarantees about the determinism of host
@@ -181,7 +181,7 @@ instructions for manipulating the linear memory, and control instructions for
 manipulating the program's control flow.
 Notable for a lower-level language, WebAssembly's control flow is fully
 structured: there is no rudimentary \texttt{goto}-like construct, and the flow
-of the program is manipulated only by structured instructions such as blocks
+of the program is manipulated only by higher-level instructions such as blocks
 and loops, if statements, and branch instructions.
 In addition to the \textit{basic instructions} that are available to
 programmers, the specification also defines several \textit{administrative
@@ -241,9 +241,9 @@ WebAssembly, by contrast, is developed in the open as a web standard---the
 direction of the project is not at the sole discretion of any one organization.
 WebAssembly virtual machines are integrated directly into modern browsers,
 requiring no additional action by the user to enable.
-If a given applet requires a newer version of the JRE than is installed on the
-system, or if no JRE is installed at all, the user must download and install
-it.
+If a given applet requires a newer version of the Java Runtime Environment
+(JRE) than is installed on the system, or if no JRE is installed at all, the
+user must download and install it.
 The Java 8 Runtime Environment installer currently is between 60 and 80 MB,
 depending on the platform.
 Performing this installation requires administrative privileges, preventing
@@ -916,7 +916,7 @@ use as a starting point---so the authors reduced the language to a
 continuation-passing style language that includes the core lifetime features
 mentioned above named $\lambda_{\textrm{Rust}}$.
 Iris\cite{Iris}, a ``Higher-Order Concurrent Separation Logic Framework,
-implemented and verified in the Coq proof assistant'' provides built-in support
+implemented and verified in the Coq proof assistant,'' provides built-in support
 for ownership reasoning, making it a fitting choice for a proof assistant for
 this task.
 \citeauthor{RustBeltRelaxed} extended this work, accounting for relaxed-memory
